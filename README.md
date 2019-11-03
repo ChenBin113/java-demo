@@ -131,9 +131,9 @@ public class ModifierTest02 extends ModifierTest01 {
 
 ![1572662724903.png](https://github.com/ChenBin113/java-demo/blob/master/static/1572662724903.png)
 
-### String 类
+## String 类
 
-#### 正则表达式
+### 正则表达式
 
 ```java
 Pattern 类
@@ -145,7 +145,7 @@ s.split();
 
 一些能够适用正则表达式的地方
 
-#### StringBuffer
+### StringBuffer
 
 ![1572494593118](https://github.com/ChenBin113/java-demo/blob/master/static/1572494593118.png)
 
@@ -161,7 +161,51 @@ StringBuffer 虽然是线程安全的，但是其安全指的是操作上的安�
 
 JDK 5 加入了 StringBuilder，它适用于单线程，且操作相同，由于没有加入 synchronized 同步机制，使得它能更快完成任务，优先推荐使用。
 
-StringBuffer 初始容量默认是 16，此后如果超出长度，在使用 append() 方法时会自动增加到刚好容纳的容量，为了避免频繁扩容影响运行效率，可以提前设定好 StringBuffer 的容量。
+StringBuffer 初始容量默认是 16，此后如果超出长度，在使用 append() 方法时会扩容，策略有两种：
+
+1. 先将当前容量 * 2，再加 2.
+
+2. 如果此时容量还比追加后的 StringBuffer 长度 minCapacity 小，则使用minCapacity.
+
+3. 此时的容量仍需要判断是否超出 StringBuffer 规定的最大容量，如果超过则**可能**报出 OutOfMemoryError 异常.
+
+   注：**可能** 是因为 StringBuffer 规定的最大容量和 Integer.*MAX_VALUE* 仍有 8 个空位.
+
+```java
+/*
+AbstractStringBuilder.java
+StringBuffer 调用的 append() 方法中调用了父类的这个方法
+*/
+private int newCapacity(int minCapacity) {
+    // overflow-conscious code
+    int newCapacity = (value.length << 1) + 2;
+    if (newCapacity - minCapacity < 0) {
+        newCapacity = minCapacity;
+    }
+    return (newCapacity <= 0 || MAX_ARRAY_SIZE - newCapacity < 0)
+        ? hugeCapacity(minCapacity)
+        : newCapacity;
+}
+
+private int hugeCapacity(int minCapacity) {
+    if (Integer.MAX_VALUE - minCapacity < 0) { // overflow
+        throw new OutOfMemoryError();
+    }
+    return (minCapacity > MAX_ARRAY_SIZE)
+        ? minCapacity : MAX_ARRAY_SIZE;
+}
+
+private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+```
+
+```java
+/*
+Integer.java
+*/
+@Native public static final int MAX_VALUE = 0x7fffffff;
+```
+
+为了避免频繁扩容影响运行效率，可以提前设定好 StringBuffer 的容量。
 
 # 下面是需要整合的内容
 

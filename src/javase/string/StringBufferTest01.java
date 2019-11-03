@@ -7,6 +7,6 @@ public class StringBufferTest01 {
         buffer.append("my name!");
         buffer.append("H");
         buffer.append("H");
-        buffer.append("H");
+        buffer.append("Appends the specified StringBuffer to this sequence");
     }
 }
