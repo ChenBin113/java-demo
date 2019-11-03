@@ -1,4 +1,4 @@
-package javase;
+package javase.string;
 
 /**
  * 测试 String 在 JVM 中的一些使用问题

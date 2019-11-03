@@ -1,4 +1,4 @@
-package javase.abstractclass;
+package javase.abstracttest;
 
 public class AbstractTest01 {
     public static void main(String[] args) {

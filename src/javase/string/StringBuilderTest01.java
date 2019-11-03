@@ -1,4 +1,4 @@
-package javase;
+package javase.string;
 
 public class StringBuilderTest01 {
     public static void main(String[] args) {
