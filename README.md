@@ -75,9 +75,9 @@ public class Test01 {
 
 Object 类是 sun 公司提供的根类，所有类都默认是继承 Object 类，其中就有抽象类，所以答案是[可以](src/javase/abstracttest/AbstractTest01.java)。举个例子：
 
-![1572680822717](static/1572680822717.png)
+![1572680822717](https://github.com/ChenBin113/java-demo/blob/master/static/1572680822717.png)
 
-![1572681294824](static/1572681294824.png)
+![1572681294824](https://github.com/ChenBin113/java-demo/blob/master/static/1572681294824.png)
 
 无论是 java 自带的类库还是自己新建的抽象类，无一例外继承了 Object 类。
 
@@ -87,7 +87,7 @@ Object 类是 sun 公司提供的根类，所有类都默认是继承 Object 类
 
 不是，[这篇文章](https://blog.csdn.net/xidiancoder/article/details/78011148)很详细说明了。举个例子：
 
-![1572680857088](static/1572680857088.png)
+![1572680857088](https://github.com/ChenBin113/java-demo/blob/master/static/1572680857088.png)
 
 ### 权限修饰符
 
@@ -129,7 +129,7 @@ public class ModifierTest02 extends ModifierTest01 {
 
 ## 异常
 
-![1572662724903.png](static/1572662724903.png)
+![1572662724903.png](https://github.com/ChenBin113/java-demo/blob/master/static/1572662724903.png)
 
 ### String 类
 
@@ -147,7 +147,7 @@ s.split();
 
 #### StringBuffer
 
-![1572494593118](static/1572494593118.png)
+![1572494593118](https://github.com/ChenBin113/java-demo/blob/master/static/1572494593118.png)
 
 根据 StringBuffer 的文档说明可知，StringBuffer 是线程安全的，主要体现在它的方法上有 synchronized 同步锁。
 
