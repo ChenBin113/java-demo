@@ -1,5 +1,9 @@
 # java - demo
 
+[TOC]
+
+
+
 ## 项目起源
 
 - Java 知识点总结。
@@ -206,6 +210,195 @@ Integer.java
 ```
 
 为了避免频繁扩容影响运行效率，可以提前设定好 StringBuffer 的容量。
+
+## Collection
+
+### List
+
+#### ArrayList 源码分析
+
+数组和集合的区别主要有三点：
+
+1. 数组一旦定义，在内存的空间也就确定；集合可以动态的增加长度。
+2. 数组可以存储基本类型的数据和引用类型数据；集合只能存储引用类型数据，基本数据类型需要转换成相应的包装类。
+3. 数组是某一类型的集合；但是集合需要使用泛型才能统一类型，没有使用泛型的情况下，集合中可以存储多种类型的数据。
+
+主要探究 ArrayList add() 和 remove() 源码，借此看集合如何扩容。
+
+add() 方法：
+
+- 需要确保链表够大，这时候需要计算内部容量，已经明确需要多少容量，如果需要容量 > 已有容量，则需要扩容。
+
+```java
+public boolean add(E e) {
+    //主要工作的函数：
+    ensureCapacityInternal(size + 1);  // Increments modCount!!
+    //末尾增加数据，size + 1
+    elementData[size++] = e;
+    return true;
+}
+
+//确保内部容量够
+private void ensureCapacityInternal(int minCapacity) {
+    ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));
+}
+
+//计算容量
+private static int calculateCapacity(Object[] elementData, int minCapacity) {
+    //如果一开始链表的内容为空，将返回的是 DEFAULT_CAPACITY = 10
+    if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
+        //DEFAULT_CAPACITY 默认容量是 10
+        return Math.max(DEFAULT_CAPACITY, minCapacity);
+    }
+    return minCapacity;
+}
+
+//明确的容量
+private void ensureExplicitCapacity(int minCapacity) {
+    modCount++;
+
+    // overflow-conscious code
+    if (minCapacity - elementData.length > 0)
+        //扩容
+        grow(minCapacity);
+}
+
+//扩容方法，如果扩容为原来的 1.5 倍够用则可，否则扩容到够用为止(除非达到上限)，和 StringBuffer 扩容原理相似
+private void grow(int minCapacity) {
+    // overflow-conscious code
+    int oldCapacity = elementData.length;
+    int newCapacity = oldCapacity + (oldCapacity >> 1);
+    if (newCapacity - minCapacity < 0)
+        newCapacity = minCapacity;
+    if (newCapacity - MAX_ARRAY_SIZE > 0)
+        newCapacity = hugeCapacity(minCapacity);
+    // minCapacity is usually close to size, so this is a win:
+    elementData = Arrays.copyOf(elementData, newCapacity);
+}
+```
+
+remove() 方法：
+
+- 检查是否越界，挪动，尾部元素置空等待 GC 回收。
+
+```java
+public E remove(int index) {
+    //检查一下是否越界
+    rangeCheck(index);
+
+    modCount++;
+    //获取值
+    E oldValue = elementData(index);
+
+    //将移除元素后面的数值整体往前挪一位
+    int numMoved = size - index - 1;
+    if (numMoved > 0)
+        System.arraycopy(elementData, index+1, elementData, index, numMoved);
+    //size - 1，同时也就是链表结尾的元素置空，等待 GC 回收，非常优雅的写法
+    elementData[--size] = null; // clear to let GC do its work
+
+    return oldValue;
+}
+```
+
+#### Vector 源码分析
+
+主要是 grow() 方法的对比：一般扩容后的容量为原来容量的 2 倍。
+
+```java
+private void grow(int minCapacity) {
+    // overflow-conscious code
+    int oldCapacity = elementData.length;
+    int newCapacity = oldCapacity + ((capacityIncrement > 0) ? capacityIncrement : oldCapacity);
+    if (newCapacity - minCapacity < 0)
+        newCapacity = minCapacity;
+    if (newCapacity - MAX_ARRAY_SIZE > 0)
+        newCapacity = hugeCapacity(minCapacity);
+    elementData = Arrays.copyOf(elementData, newCapacity);
+}
+```
+
+#### ArrayList & LinkedList 源码分析
+
+```java
+/*
+ArrayList.java，数据结构是一个数组
+*/
+private static final Object[] EMPTY_ELEMENTDATA = {};
+
+private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
+
+transient Object[] elementData;
+```
+
+LinkedList 的 add() 和 remove() 方法主要是双向链表的插入和删除。
+
+```java
+/*
+LinkedList.java，数据结构是一个双向链表，除头结点和尾结点外其他结点都有前驱和后继
+*/
+private static class Node<E> {
+    E item;
+    Node<E> next;
+    Node<E> prev;
+
+    Node(Node<E> prev, E element, Node<E> next) {
+        this.item = element;
+        this.next = next;
+        this.prev = prev;
+    }
+}
+```
+
+### Set
+
+#### HashSet 源码分析
+
+底层是 HashMap
+
+#### LinkedHashSet 源码分析
+
+底层是链表。
+
+#### TreeSet 源码分析
+
+数据结构是二叉树。
+
+### Queue
+
+#### PriorityQueue
+
+最大堆，最小堆的应用。
+
+## Map
+
+### Hashtable
+
+> If a thread-safe implementation is not needed, it is recommended to use `HashMap` in place of  `Hashtable`. If a thread-safe highly-concurrent implementation is  desired, then it is recommended to use `ConcurrentHashMap`  in place of `Hashtable`.
+
+JDK 1.0 就有了 Hashtable，但是**官方文档**推荐我们在线程安全的环境下使用 HashMap，在高并发环境下，则改用 ConcurrentHashMap。总的来说就是，成为历史文物了。
+
+### HashMap
+
+JDK 1.7 组成为 `数组 + 链表`，JDK 1.8 组成为 `数组 + 链表 + 红黑树`。
+
+### TreeMap
+
+## IO 流
+
+序列化和反序列化
+
+## 多线程
+
+三种方法：
+
+1. 继承 Thread 类，重写 run 方法。
+2. 实现 Runnable 接口。
+3. 实现 Callable 接口。
+
+#### Thread 类源码分析
+
+
 
 # 下面是需要整合的内容
 
