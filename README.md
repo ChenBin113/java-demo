@@ -31,6 +31,17 @@
 
 ## 语言基础
 
+### 算术运算符
+
+%，如果对负数取模，可以把模数负号忽略不计。
+
+```java
+System.out.println(5 % -2); //1
+System.out.println(-5 % 2); //-1
+System.out.println(-5 % -2); //-1
+System.out.println(5 % 2); //1
+```
+
 ### 分支语句
 
 #### while & for 循环：开发使用 for 循环比较多，变量可以从内存中较早的消失？
