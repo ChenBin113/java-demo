@@ -15,23 +15,51 @@
 
 ### 常用 DOS 命令
 
-| 功能                                     | 如何实现     |
-| ---------------------------------------- | ------------ |
-| 进入不同的磁盘                           | D:           |
-| 查看当前目录所有文件和文件夹             | dir          |
-| 创建文件夹                               | md test      |
-| 进入文件夹                               | cd test      |
-| 退回到上一级目录                         | cd..         |
-| 删除文件                                 | del test.txt |
-| 删除多个同类型文件                       | del *.txt    |
-| 删除空文件夹                             | rd test      |
-| 删除非空文件夹，使用下列命令后提示选择 Y | del test     |
+| 功能                                     | 如何实现             |
+| ---------------------------------------- | -------------------- |
+| 进入不同的磁盘                           | D:                   |
+| 查看当前目录所有文件和文件夹             | dir                  |
+| 创建文件夹                               | md test              |
+| 进入文件夹                               | cd test              |
+| 退回到上一级目录                         | cd..                 |
+| 删除文件                                 | del test.txt         |
+| 删除多个同类型文件                       | del *.txt            |
+| 删除空文件夹                             | rd test              |
+| 删除非空文件夹，使用下列命令后提示选择 Y | del test             |
+| 读取文件内容                             | more [file]          |
+| 编译 java 文件                           | javac *.java         |
+| 运行字节码文件                           | java *(不需要扩展名) |
 
 进入一个空的文件夹后使用 `dir` 命令可以看到两个 <dir> 文件 `.` 和 `..` ，分别代表本级文件夹和上一级文件夹。
+
+```java
+public class MainTest {
+    public static void main(String[] args) {
+        System.out.println(args[0]);
+        System.out.println(args[1]);
+    }
+}
+
+cmd:
+javac MainTest.java
+java MainTest "hello" "world"
+
+output:
+"hello"
+"world"
+```
+
+
 
 ## 语言基础
 
 ### 算术运算符
+
+注意：算法(第四版)中指出
+
+> +、-、*、/ 都是被重载过的
+>
+> Java 语言规范规定，在逻辑运算符中，! 拥有最高的优先级，之后是 &&，接下来是 ||
 
 %，如果对负数取模，可以把模数负号忽略不计。
 
@@ -41,6 +69,26 @@ System.out.println(-5 % 2); //-1
 System.out.println(-5 % -2); //-1
 System.out.println(5 % 2); //1
 ```
+
+### 基本数据类型
+
+```java
+double d1 = 1.0;
+double d2 = 0.00;
+double d3 = d1 / d2;
+System.out.println(d3); //output: Infinity
+//System.out.println(d3 instanceof Double); //Error，instanceof 不能比较基本数据类型
+System.out.println(d1 / d2); //output: Infinity
+
+Double d1 = 1.0;
+Double d2 = 0.00;
+Double d3 = d1 / d2;
+System.out.println(d3); //output: Infinity
+System.out.println(d3 instanceof Double); //true
+System.out.println(d1 / d2); //output: Infinity
+```
+
+
 
 ### 分支语句
 
@@ -415,6 +463,15 @@ JDK 1.7 组成为 `数组 + 链表`，JDK 1.8 组成为 `数组 + 链表 + 红�
 ### TreeMap
 
 ## IO 流
+
+### FileInputStream
+
+官方文档是这样描述的：
+
+> A `FileInputStream` obtains input bytes from a file in a file system. What files are available depends on the host environment. 
+> `FileInputStream` is meant for reading streams of raw bytes such  as image data. For reading streams of characters, consider using  `FileReader`.
+
+FileInputStream 是从操作系统中的文件以字节的方式读取的，文件是否存在需要看主机中。照片可以用这种方式读，文本建议还是用 FileReader。
 
 序列化和反序列化
 
