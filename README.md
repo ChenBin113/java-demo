@@ -213,6 +213,30 @@ public class ModifierTest02 extends ModifierTest01 {
 
 ![1572662724903.png](https://github.com/ChenBin113/java-demo/blob/master/static/1572662724903.png)
 
+## 数组
+
+声明和初始化：
+
+```java
+//声明
+int[] arr;
+
+//初始化
+//静态初始化，初始化并赋值
+int[] arr = new int[]{0, 1, 2};
+
+//动态初始化，初始化，之后再赋值
+int[] arr = new int[3];
+```
+
+错误的方式：
+
+```java
+int[] arr = new int[]; //没有指定数组大小
+int[3] arr = new int[3]; //arr 前的 int[] 是声明为 int 类型数组，不能在 [] 中定义数组大小
+int[] arr = new int[3]{0, 1, 2}; //不能同时使用动态初始化和静态初始化
+```
+
 ## String 类
 
 ### 正则表达式
