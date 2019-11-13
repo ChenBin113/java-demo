@@ -1,24 +1,15 @@
-package javase.wrapperclass;
+package javase;
 
+/**
+ * 1.测试 Integer 类的方法 highestOneBit
+ */
 public class IntegerTest01 {
     public static void main(String[] args) {
         System.out.println("-------------- 实验 1 --------------");
         for (int i = 0; i < 10; i++) {
-            System.out.println(Integer.highestOneBit(i));
+            System.out.print(Integer.highestOneBit(i) + "   "); //output: 0   1   2   2   4   4   4   4   8   8
         }
-        /*
-        output:
-        0
-        1
-        2
-        2
-        4
-        4
-        4
-        4
-        8
-        8
-         */
+        System.out.println();
 
         //1. new 是开辟了新空间存储
         //2. Integer 用 equals 比较值，== 比较的是地址值和值，即是否为同一对象

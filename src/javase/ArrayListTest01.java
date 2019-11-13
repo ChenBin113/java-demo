@@ -1,7 +1,10 @@
-package javase.collection;
+package javase;
 
 import java.util.ArrayList;
 
+/**
+ * 1.没有使用泛型，会导致整个集合的数据类型混乱
+ */
 public class ArrayListTest01 {
 
     public static void main(String[] args) {

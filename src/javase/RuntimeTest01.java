@@ -5,6 +5,7 @@ package javase;
  */
 public class RuntimeTest01 {
     public static void main(String[] args) {
-
+        //Runtime.java
+        //private static Runtime currentRuntime = new Runtime();
     }
 }
