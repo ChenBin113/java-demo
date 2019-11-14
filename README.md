@@ -219,7 +219,7 @@ Object 类是 sun 公司提供的根类，所有类都默认是继承 Object 类
 | protected |  √   |      √       |  √   |    ×     |
 |  public   |  √   |      √       |  √   |    √     |
 
-如果 ModifierTest01 和 ModifierTest02 不在同一个包，只能访问到 height 和 id 属性。
+如果 ModifierTest01 和 ModifierTest02 不在同一个包，且 ModifierTest02 是 ModifierTest01 子类，所以只能访问到 height 和 id 属性。
 
 ```java
 package javase.modifier;
@@ -240,6 +240,82 @@ public class ModifierTest02 extends ModifierTest01 {
         ModifierTest02 test02 = new ModifierTest02();
         System.out.println(test02.height);
         System.out.println(test02.id);
+    }
+}
+```
+
+子类继承父类的所有成员变量和方法，但是由于权限控制有些成员变量和方法不能直接使用。
+
+### 构造方法和静态代码块加载顺序
+
+```java
+/**
+ * 1.实验结果表明，static 修饰的静态代码块在类加载的时候就运行，且只运行一次
+ * 2.构造方法随 new 对象的时候执行，每新建一个对象执行一次
+ */
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("-------------- 实验 1 --------------");
+        new Main();
+        new Main();
+    }
+
+    static {
+        System.out.println("before main");
+    }
+
+    public Main() {
+        System.out.println("Main.Main");
+    }
+}
+
+output:
+before main
+-------------- 实验 1 --------------
+Main.Main
+Main.Main
+```
+
+### 多态
+
+```java
+package javase;
+
+/**
+ * 1.父类引用指向子类对象，只能使用父类本身的成员变量
+ * 2.强制类型转换后，就可以使用子类的成员变量
+ * 3.instanceof 测试结果表明，一个类的对象 instanceof 类 / 父类，返回 true；一个类的对象 instanceof 子类 / 其他类，false
+ */
+public class PlymorphismTest01 {
+    class FatherClass {
+        private String name = "Father";
+    }
+
+    class SonClass extends FatherClass {
+        String name = "Son";
+    }
+
+    public void fun1() {
+        FatherClass f = new SonClass();
+        System.out.println(f.name); //Father
+        System.out.println("-------------- 父类转为子类 --------------");
+        System.out.println(((SonClass) f).name); //Son
+    }
+
+    public void fun2() {
+        FatherClass f = new FatherClass();
+        System.out.println(f instanceof FatherClass); //true
+        System.out.println(f instanceof SonClass); //false
+    }
+
+    public void fun3() {
+        SonClass f = new SonClass();
+        System.out.println(f instanceof FatherClass); //true
+        System.out.println(f instanceof SonClass); //true
+    }
+
+    public static void main(String[] args) {
+        new PlymorphismTest01().fun1();
     }
 }
 ```
