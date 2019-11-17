@@ -265,7 +265,7 @@ public class Main {
     }
 
     public Main() {
-        System.out.println("Main.Main");
+        Syscar.Mainntln("Main.Main");
     }
 }
 
@@ -338,7 +338,7 @@ public FileInputStream(String name) throws FileNotFoundException {
     this(name != null ? new File(name) : null);
 }
 
-/*Test.java*/
+javase.reflect.carcar.Test.java*/
 public static void main(String[] args) throws FileNotFoundException {
     new FileInputStream("d:/test");
 }
@@ -353,7 +353,7 @@ public static void main(String[] args) {
 ```
 
 ```java
-public class Test {
+public class javase.reflect.car.Test {
 	public static void main(String[] args) throws RuntimeException,Exception {	
 		throw new RuntimeException();	
 	}
@@ -768,4 +768,261 @@ FileInputStream 是从操作系统中的文件以字节的方式读取的，文�
 
 #### Thread 类源码分析
 
+Thread 类从源码可以看到，线程一共有六种状态，分别是：
+
+- NEW
+- RUNNABLE
+- BLOCKED
+- WAITING
+- TIMED_WAITING
+- TERMINATED
+
+```java
+public enum State {
+    /**
+     * Thread state for a thread which has not yet started.
+     */
+    NEW,
+
+    /**
+     * Thread state for a runnable thread.  A thread in the runnable
+     * state is executing in the Java virtual machine but it may
+     * be waiting for other resources from the operating system
+     * such as processor.
+     */
+    RUNNABLE,
+
+    /**
+     * Thread state for a thread blocked waiting for a monitor lock.
+     * A thread in the blocked state is waiting for a monitor lock
+     * to enter a synchronized block/method or
+     * reenter a synchronized block/method after calling
+     * {@link Object#wait() Object.wait}.
+     */
+    BLOCKED,
+
+    /**
+     * Thread state for a waiting thread.
+     * A thread is in the waiting state due to calling one of the
+     * following methods:
+     * <ul>
+     *   <li>{@link Object#wait() Object.wait} with no timeout</li>
+     *   <li>{@link #join() Thread.join} with no timeout</li>
+     *   <li>{@link LockSupport#park() LockSupport.park}</li>
+     * </ul>
+     *
+     * <p>A thread in the waiting state is waiting for another thread to
+     * perform a particular action.
+     *
+     * For example, a thread that has called <tt>Object.wait()</tt>
+     * on an object is waiting for another thread to call
+     * <tt>Object.notify()</tt> or <tt>Object.notifyAll()</tt> on
+     * that object. A thread that has called <tt>Thread.join()</tt>
+     * is waiting for a specified thread to terminate.
+     */
+    WAITING,
+
+    /**
+     * Thread state for a waiting thread with a specified waiting time.
+     * A thread is in the timed waiting state due to calling one of
+     * the following methods with a specified positive waiting time:
+     * <ul>
+     *   <li>{@link #sleep Thread.sleep}</li>
+     *   <li>{@link Object#wait(long) Object.wait} with timeout</li>
+     *   <li>{@link #join(long) Thread.join} with timeout</li>
+     *   <li>{@link LockSupport#parkNanos LockSupport.parkNanos}</li>
+     *   <li>{@link LockSupport#parkUntil LockSupport.parkUntil}</li>
+     * </ul>
+     */
+    TIMED_WAITING,
+
+    /**
+     * Thread state for a terminated thread.
+     * The thread has completed execution.
+     */
+    TERMINATED;
+}
+```
+
+
+
 ## 反射
+
+```java
+package javase.reflect.car;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
+/**
+ * 反射：使用两种方式读取配置文件的信息
+ */
+public class Test {
+    public static void main(String[] args) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        fun1();
+        fun2();
+    }
+
+    public static void fun1() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        ResourceBundle bundle = ResourceBundle.getBundle("javase/reflect/config/config");
+        String car = bundle.getString("car");
+        Class<?> aClass = Class.forName(car);
+        Car c = (Car) aClass.newInstance();
+        c.run();
+    }
+
+    public static void fun2() {
+        Properties p = new Properties();
+        try (FileReader fileReader = new FileReader("src/javase/reflect/config/config.properties")) {
+            p.load(fileReader);
+            Class<?> aClass = Class.forName(p.getProperty("car"));
+            Car c = (Car) aClass.newInstance();
+            c.run();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+通过读取配置文件，使用反射动态的创建类，虽然运行的效率受到影响，但是可以比较灵活的修改配置而不改动代码，避免不必要产生的 bug。框架常使用反射原理修改配置。
+
+# jvm
+
+## 问题
+
+请谈谈你对 JVM 的理解？java8 的虚拟机有什么更新？
+
+什么是 00M ？什么是 StackOverflowError？有哪些方法分析？
+
+JVM 的常用参数调优你知道哪些？
+
+谈谈 JVM 中，对类加载器你的认识？
+
+![](https://github.com/ChenBin113/java-demo/blob/master/static/1573980500697.png)
+
+## 类加载器
+
+### 类加载器是什么？
+
+- java 文件编译成字节码文件，需要由类加载器子系统加载到虚拟机中。
+
+- 字节码文件有特殊的标识：`cafe`。
+
+- 加载时将文件内容转换成方法区运行时的数据结构。
+
+### 有几种类加载器？
+
+jvm 一共有三种加载器，可通过继承 ClassLoader 类自定义类加载器
+
+- Bootstrap ClassLoader，rt 包 jre1.8.0_221/lib/rt.jar
+- Extension ClassLoader，扩展包
+- Application ClassLoader，定义类
+- 还可以继承 ClassLoader 类，自定义加载器，级别为 AppClassLoader 之下
+
+通过查看源码 `rt.jar\sun\misc` 可以看到加载器的存储位置在 rt(run time) 包下，即运行时就会加载的包。
+
+![1573981732945](static/1573981732945.png)
+
+### 双亲委派机制 Parents Delegate
+
+类加载的时候不同的加载器来加载类，都会先往上传递，交给 Bootstrap 类加载器，它不能加载的类再交给 Extension 类加载器， Extension 类加载器不能加载再交给 AppClassLoader 类加载器，如果还不能加载类，则会报 ClassNotFoundException。因此，由不同的类加载器加载 Object 类，最终加载的都是同一个。
+
+```java
+package jvm;
+
+public class ClassLoaderTest01 {
+    public static void main(String[] args) {
+        ClassLoaderTest01 c = new ClassLoaderTest01();
+        System.out.println(c.getClass().getClassLoader());
+        System.out.println(c.getClass().getClassLoader().getParent());
+        System.out.println(c.getClass().getClassLoader().getParent().getParent());
+
+        Object o = new Object();
+        System.out.println(o.getClass().getClassLoader());
+        System.out.println(o.getClass().getClassLoader().getParent());
+
+        /*
+        output:
+        sun.misc.Launcher$AppClassLoader@18b4aac2
+        sun.misc.Launcher$ExtClassLoader@1b6d3586
+        null
+        null
+        Exception in thread "main" java.lang.NullPointerException
+            at jvm.ClassLoaderTest01.main(ClassLoaderTest01.java:12)
+
+        Process finished with exit code 1
+         */
+    }
+}
+```
+
+从输出结果可以看到，自定义的类由 AppClassLoader 加载，AppClassLoader 父类为 ExtClassLoader，ExtClassLoader 父类为 Bootstrap ClassLoader，打印结果为 null，再**往上找**就出现了 NullPointerException。
+
+### 沙箱安全
+
+由于类加载有双亲委派机制，以下代码虽然在语法上没有问题，编译可以通过，但是运行的时候由于加载的是 java.lang 包下的 String 类，AppClassLoader 会往上查找，最终由 Bootstrap ClassLoader 加载。
+
+因此双亲委派机制能够保证 java 运行环境是安全无污染的。
+
+```java
+package java.lang;
+
+publicclassString{
+    publicstaticvoidmain(String[]args){
+        fun1();
+    }
+
+    publicstaticvoidfun1(){
+        System.out.println("String.fun1");
+    }
+}
+      
+错误: 在类 java.lang.String 中找不到 main 方法, 请将 main 方法定义为:
+	public static void main(String[] args)
+否则 JavaFX 应用程序类必须扩展javafx.application.Application
+```
+
+## 执行引擎 Execution Engine
+
+执行引擎的作用是：解释命令，和操作系统交互
+
+## 本地方法接口和本地方法栈
+
+和底层交互的栈区，一些以 native 关键字修饰的方法使用的栈区，程序计数器对这里的指令为 null，以 C 语言写的方法放置的区域。
+
+![](https://github.com/ChenBin113/java-demo/blob/master/static/1573980418802.png)
+
+## 寄存器
+
+线程**私有**，指针，作用是指向方法区的方法字节码，所占内存小，可忽略不计，几乎不存在 gc。
+
+![](https://github.com/ChenBin113/java-demo/blob/master/static/1573982452965.png)
+
+## 方法区
+
+存储的是类结构信息，例如字节码文件 Car.class 通过类加载器加载到 JVM 内存中，成为一个模板文件 Car Class，以后实例化一个个对象都是从这个模板文件开始的。
+
+方法区有运行时常量池，类的属性、方法数据，构造方法和普通方法信息。
+
+不同 JDK 版本的方法区有所区别，这个跟实现有关，JDK 7 为永久代 (PermGen Space) ，JDK 8 为元空间 (Metaspace)。
+
+实例变量不是存放在方法区中，而是存放在堆内存中。
+
+## 栈
+
+栈管运行，堆管存储。
+
+
+
+## gc
+
+四大垃圾收集算法
+
+七个垃圾收集器
