@@ -16,6 +16,20 @@
 	- [IO 流](#io-%E6%B5%81)
 	- [多线程](#%E5%A4%9A%E7%BA%BF%E7%A8%8B)
 	- [反射](#%E5%8F%8D%E5%B0%84)
+- [juc](#juc)
+	- [进程和线程](#%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B)
+	- [并发和并行](#%E5%B9%B6%E5%8F%91%E5%92%8C%E5%B9%B6%E8%A1%8C)
+	- [三个包](#%E4%B8%89%E4%B8%AA%E5%8C%85)
+	- [WWH](#wwh)
+- [jvm](#jvm)
+	- [问题](#%E9%97%AE%E9%A2%98)
+	- [类加载器](#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8)
+	- [执行引擎 Execution Engine](#%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-execution-engine)
+	- [本地方法接口和本地方法栈](#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%8E%A5%E5%8F%A3%E5%92%8C%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88)
+	- [寄存器](#%E5%AF%84%E5%AD%98%E5%99%A8)
+	- [方法区](#%E6%96%B9%E6%B3%95%E5%8C%BA)
+	- [栈](#%E6%A0%88)
+	- [gc](#gc)
 
 <!-- /MarkdownTOC -->
 
@@ -75,6 +89,19 @@ output:
 > +、-、*、/ 都是被重载过的
 >
 > Java 语言规范规定，在逻辑运算符中，! 拥有最高的优先级，之后是 &&，接下来是 ||
+
+/ ，除法，得到结果都是 0.
+
+```java
+System.out.println(-1 / 2);
+System.out.println(1 / 2);
+
+output:
+0;
+0;
+```
+
+
 
 %，如果对负数取模，可以把模数负号忽略不计。
 
@@ -745,6 +772,10 @@ JDK 1.7 组成为 `数组 + 链表`，JDK 1.8 组成为 `数组 + 链表 + 红�
 
 ### TreeMap
 
+### Queue
+
+#### PriorityQueue
+
 ## IO 流
 
 ### FileInputStream
@@ -760,91 +791,93 @@ FileInputStream 是从操作系统中的文件以字节的方式读取的，文�
 
 ## 多线程
 
-三种方法：
+#### 多线程创建的三种方式：
 
 1. 继承 Thread 类，重写 run 方法。
 2. 实现 Runnable 接口。
-3. 实现 Callable 接口。
+3. 实现 Callable 接口。这个方法比较编写代码比较复杂，是 JDK 1.5 出来的。
 
 #### Thread 类源码分析
 
-Thread 类从源码可以看到，线程一共有六种状态，分别是：
+从官方文档得到：
 
-- NEW
-- RUNNABLE
-- BLOCKED
-- WAITING
-- TIMED_WAITING
-- TERMINATED
+- JVM 是支持多线程的。
+- 线程是有优先级的。当在线程中创建一个线程对象时，新对象的优先级和当前线程相同，当且仅当线程是守护线程，新的线程对象才能是守护线程。
+- 创建线程的方式：继承 Thread 类；实现 Runnable 接口。
+
+```java
+//继承 Thread 类
+class PrimeThread extends Thread {
+    long minPrime;
+    PrimeThread(long minPrime) {
+        this.minPrime = minPrime;
+    }
+
+    public void run() {
+        // compute primes larger than minPrime
+        . . .
+    }
+}
+
+//给出调用方法
+PrimeThread p = new PrimeThread(143);
+p.start();
+```
+
+```java
+//实现 Runnable 接口
+class PrimeRun implements Runnable {
+    long minPrime;
+    PrimeRun(long minPrime) {
+        this.minPrime = minPrime;
+    }
+
+    public void run() {
+        // compute primes larger than minPrime
+        . . .
+    }
+}
+
+//给出调用方法
+PrimeRun p = new PrimeRun(143);
+new Thread(p).start();
+```
+
+从源码级别可以看到这两种创建线程方法的区别，一个是直接创建继承 Thread 类的子类对象，子类对象可以直接调用 start 方法；另一个是使用了 Thread 类不同的构造器，传入的对象是一个实现了 Runnable 接口的类对象。
+
+#### Thread.State - Thread 的内部枚举类
+
+Thread 类从源码可以看到，线程一共有六种状态，分别是：
 
 ```java
 public enum State {
-    /**
-     * Thread state for a thread which has not yet started.
-     */
+    //A thread that has not yet started is in this state. 
+    //新建，刚刚 new 出来，还没有调用 start 方法
     NEW,
-
-    /**
-     * Thread state for a runnable thread.  A thread in the runnable
-     * state is executing in the Java virtual machine but it may
-     * be waiting for other resources from the operating system
-     * such as processor.
-     */
+    
+    //A thread executing in the Java virtual machine is in this state. 
+    //线程在虚拟机中正在运行
     RUNNABLE,
-
-    /**
-     * Thread state for a thread blocked waiting for a monitor lock.
-     * A thread in the blocked state is waiting for a monitor lock
-     * to enter a synchronized block/method or
-     * reenter a synchronized block/method after calling
-     * {@link Object#wait() Object.wait}.
-     */
+    
+    //A thread that is blocked waiting for a monitor lock is in this state.
+    //被锁住了
     BLOCKED,
-
-    /**
-     * Thread state for a waiting thread.
-     * A thread is in the waiting state due to calling one of the
-     * following methods:
-     * <ul>
-     *   <li>{@link Object#wait() Object.wait} with no timeout</li>
-     *   <li>{@link #join() Thread.join} with no timeout</li>
-     *   <li>{@link LockSupport#park() LockSupport.park}</li>
-     * </ul>
-     *
-     * <p>A thread in the waiting state is waiting for another thread to
-     * perform a particular action.
-     *
-     * For example, a thread that has called <tt>Object.wait()</tt>
-     * on an object is waiting for another thread to call
-     * <tt>Object.notify()</tt> or <tt>Object.notifyAll()</tt> on
-     * that object. A thread that has called <tt>Thread.join()</tt>
-     * is waiting for a specified thread to terminate.
-     */
+    
+    //A thread that is waiting indefinitely for another thread to perform a particular action is in this state. 
+    //处于等待状态
     WAITING,
-
-    /**
-     * Thread state for a waiting thread with a specified waiting time.
-     * A thread is in the timed waiting state due to calling one of
-     * the following methods with a specified positive waiting time:
-     * <ul>
-     *   <li>{@link #sleep Thread.sleep}</li>
-     *   <li>{@link Object#wait(long) Object.wait} with timeout</li>
-     *   <li>{@link #join(long) Thread.join} with timeout</li>
-     *   <li>{@link LockSupport#parkNanos LockSupport.parkNanos}</li>
-     *   <li>{@link LockSupport#parkUntil LockSupport.parkUntil}</li>
-     * </ul>
-     */
+    
+    //A thread that is waiting for another thread to perform an action for up to a specified waiting time is in this state.
+    //确定时间的等待状态
     TIMED_WAITING,
-
-    /**
-     * Thread state for a terminated thread.
-     * The thread has completed execution.
-     */
+    
+    //A thread that has exited is in this state. 
+	//线程已经退出，即终结了
     TERMINATED;
 }
 ```
 
-
+感兴趣的同学可以再去看看源码。
 
 ## 反射
 
@@ -892,6 +925,36 @@ public class Test {
 ```
 
 通过读取配置文件，使用反射动态的创建类，虽然运行的效率受到影响，但是可以比较灵活的修改配置而不改动代码，避免不必要产生的 bug。框架常使用反射原理修改配置。
+
+# juc
+
+## 进程和线程
+
+进程是资源（内存，CPU）分配的基本单位，线程是轻量化的进程，受 CPU 调度和分派的基本单位。一个程序运行就是一个进程，而一个进程往往有多个线程。多线程的程序可以提供丰富的功能。
+
+## 并发和并行
+
+并发指多个人同时做一件事，如秒杀活动。
+
+并行指多个操作同时处理，如一个人同时做多件事
+
+## 三个包
+
+java.util.concurrent
+
+java.util.concurrent.atomic
+
+java.util.concurrent.locks
+
+## WWH
+
+what 什么是 juc？
+
+why 为什么要用 juc？
+
+how 怎么用 juc？
+
+
 
 # jvm
 
@@ -1026,3 +1089,4 @@ publicclassString{
 四大垃圾收集算法
 
 七个垃圾收集器
+
