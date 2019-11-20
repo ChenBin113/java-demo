@@ -564,6 +564,8 @@ private volatile static Locale defaultDisplayLocale = null;
 
 ## Collection
 
+![1574249182927](https://github.com/ChenBin113/java-demo/blob/master/static/1574249182927.png)
+
 ### List
 
 
@@ -752,13 +754,149 @@ private static class Node<E> {
 
 数据结构是二叉树。
 
+先创建一个比较器 IdComparator 和即将比较的类 Person。
+
+```java
+class IdComparator implements Comparator<Person> {
+    @Override
+    public int compare(Person o1, Person o2) {
+        return o2.getId() - o1.getId();
+    }
+}
+
+class Person {
+    private int id;
+    private String name;
+
+    public Person() {
+    }
+
+    public Person(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
+}
+```
+
+测试一下
+
+```java
+public class ComparatorTest02 {
+    public static void main(String[] args) {
+        Person p1 = new Person(1, "张三");
+        Person p2 = new Person(2, "李四");
+        Person p3 = new Person(3, "王五");
+
+        TreeSet<Person> set = new TreeSet<>(new IdComparator());
+        set.add(p1);
+        set.add(p2);
+        set.add(p3);
+
+        for (Person p : set) {
+            System.out.println(p);
+        }
+    }
+}
+```
+
+测试类先创建了三个 Person 类对象，然后创建一个 TreeSet 对象，构造方法传入一个事先定义的 IdComparator 类的对象，调用 add() 方法，探究一下 add() 方法源码：
+
+```java
+public boolean add(E e) {
+    return m.put(e, PRESENT)==null;
+}
+```
+
+此时可以看到方法使用的是 put() 方法，先看看 m 是什么：
+
+```java
+//The backing map.
+private transient NavigableMap<E,Object> m;
+```
+
+应该是继承自 Map，通过查它的“族谱”发现这是一个接口，继承 Map 接口：
+
+![1574250349672](static/1574250349672.png)
+
+key 在这个案例中就是 Person 类了，value 是一个 Object 类型。再看看 put 方法第二个参数 `PRESENT` ，注释说是起到占位作用的，也就是 TreeSet 只需要 Map 的 key 存放元素，value 则使用一个 Object 类的对象填充。 
+
+```java
+// Dummy value to associate with an Object in the backing Map
+private static final Object PRESENT = new Object();
+```
+
+此时可以查看 put() 方法是如何调用的了，通过 debug 可以看到调用的是 TreeMap 的 put() 方法：
+
+```java
+public V put(K key, V value) {
+    /*
+    static final class Entry<K,V> implements Map.Entry<K,V> {
+        K key;
+        V value;
+        Entry<K,V> left;
+        Entry<K,V> right;
+        Entry<K,V> parent;
+        boolean color = BLACK;
+    }
+    */
+    //这个 Entry 是 TreeMap 的一个静态内部类
+    Entry<K,V> t = root;
+	···
+    int cmp;
+    Entry<K,V> parent;
+    // split comparator and comparable paths
+    //这里就是我们定义的 IdComparator 
+    Comparator<? super K> cpr = comparator;
+	···
+}
+```
+
+感兴趣的同学可以深入研究一下 put() 方法的逻辑，现在就不展开了。最后输出结果为：
+
+```java
+output:
+Person{id=3, name='王五'}
+Person{id=2, name='李四'}
+Person{id=1, name='张三'}
+```
+
+查看以上的输出结果，自定义比较器做到了以 Id 降序比较，TreeSet 构建方法传入了比较器。
+
 ### Queue
 
 #### PriorityQueue
 
 最大堆，最小堆的应用。
 
+
+
 ## Map
+
+![1574249447217](https://github.com/ChenBin113/java-demo/blob/master/static/1574249447217.png)
 
 ### Hashtable
 
@@ -772,9 +910,7 @@ JDK 1.7 组成为 `数组 + 链表`，JDK 1.8 组成为 `数组 + 链表 + 红�
 
 ### TreeMap
 
-### Queue
-
-#### PriorityQueue
+#### 
 
 ## IO 流
 
