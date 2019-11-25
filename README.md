@@ -4,32 +4,32 @@
 
 - [项目起源](#%E9%A1%B9%E7%9B%AE%E8%B5%B7%E6%BA%90)
 - [javase](#javase)
-	- [概述](#%E6%A6%82%E8%BF%B0)
-	- [语言基础](#%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80)
-	- [面向对象](#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1)
-	- [异常](#%E5%BC%82%E5%B8%B8)
-	- [数组](#%E6%95%B0%E7%BB%84)
-	- [String 类](#string-%E7%B1%BB)
-	- [Calendar](#calendar)
-	- [Collection](#collection)
-	- [Map](#map)
-	- [IO 流](#io-%E6%B5%81)
-	- [多线程](#%E5%A4%9A%E7%BA%BF%E7%A8%8B)
-	- [反射](#%E5%8F%8D%E5%B0%84)
+    - [概述](#%E6%A6%82%E8%BF%B0)
+    - [语言基础](#%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80)
+    - [面向对象](#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1)
+    - [异常](#%E5%BC%82%E5%B8%B8)
+    - [数组](#%E6%95%B0%E7%BB%84)
+    - [String 类](#string-%E7%B1%BB)
+    - [Calendar](#calendar)
+    - [Collection](#collection)
+    - [Map](#map)
+    - [IO 流](#io-%E6%B5%81)
+    - [多线程](#%E5%A4%9A%E7%BA%BF%E7%A8%8B)
+    - [反射](#%E5%8F%8D%E5%B0%84)
 - [juc](#juc)
-	- [进程和线程](#%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B)
-	- [并发和并行](#%E5%B9%B6%E5%8F%91%E5%92%8C%E5%B9%B6%E8%A1%8C)
-	- [三个包](#%E4%B8%89%E4%B8%AA%E5%8C%85)
-	- [WWH](#wwh)
+    - [进程和线程](#%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B)
+    - [并发和并行](#%E5%B9%B6%E5%8F%91%E5%92%8C%E5%B9%B6%E8%A1%8C)
+    - [三个包](#%E4%B8%89%E4%B8%AA%E5%8C%85)
+    - [WWH](#wwh)
 - [jvm](#jvm)
-	- [问题](#%E9%97%AE%E9%A2%98)
-	- [类加载器](#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8)
-	- [执行引擎 Execution Engine](#%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-execution-engine)
-	- [本地方法接口和本地方法栈](#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%8E%A5%E5%8F%A3%E5%92%8C%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88)
-	- [寄存器](#%E5%AF%84%E5%AD%98%E5%99%A8)
-	- [方法区](#%E6%96%B9%E6%B3%95%E5%8C%BA)
-	- [栈](#%E6%A0%88)
-	- [gc](#gc)
+    - [问题](#%E9%97%AE%E9%A2%98)
+    - [类加载器](#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8)
+    - [执行引擎 Execution Engine](#%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-execution-engine)
+    - [本地方法接口和本地方法栈](#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%8E%A5%E5%8F%A3%E5%92%8C%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88)
+    - [寄存器](#%E5%AF%84%E5%AD%98%E5%99%A8)
+    - [方法区](#%E6%96%B9%E6%B3%95%E5%8C%BA)
+    - [栈](#%E6%A0%88)
+    - [gc](#gc)
 
 <!-- /MarkdownTOC -->
 
@@ -840,7 +840,7 @@ private transient NavigableMap<E,Object> m;
 
 应该是继承自 Map，通过查它的“族谱”发现这是一个接口，继承 Map 接口：
 
-![1574250349672](static/1574250349672.png)
+![1574250349672](https://github.com/ChenBin113/java-demo/blob/master/static/1574250349672.png)
 
 key 在这个案例中就是 Person 类了，value 是一个 Object 类型。再看看 put 方法第二个参数 `PRESENT` ，注释说是起到占位作用的，也就是 TreeSet 只需要 Map 的 key 存放元素，value 则使用一个 Object 类的对象填充。 
 
@@ -905,6 +905,10 @@ Person{id=1, name='张三'}
 JDK 1.0 就有了 Hashtable，但是**官方文档**推荐我们在线程安全的环境下使用 HashMap，在高并发环境下，则改用 ConcurrentHashMap。总的来说就是，成为历史文物了。
 
 ### HashMap
+
+#### 哈希表
+
+核心是基于哈希值的桶和链表，哈希值由哈希函数计算得到。
 
 JDK 1.7 组成为 `数组 + 链表`，JDK 1.8 组成为 `数组 + 链表 + 红黑树`。
 
@@ -1127,7 +1131,7 @@ jvm 一共有三种加载器，可通过继承 ClassLoader 类自定义类加载
 
 通过查看源码 `rt.jar\sun\misc` 可以看到加载器的存储位置在 rt(run time) 包下，即运行时就会加载的包。
 
-![1573981732945](static/1573981732945.png)
+![1573981732945](https://github.com/ChenBin113/java-demo/blob/master/static/1573981732945.png)
 
 ### 双亲委派机制 Parents Delegate
 
