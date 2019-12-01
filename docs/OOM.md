@@ -75,7 +75,7 @@ Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
 
 第一种方法是在运行前就添加好快照的参数，但是如果是在一个已经运行的程序上，如何添加参数能够拿到快照呢？
 
-首先，修改上述的文件，使其缓慢产生 OOM 的速度慢下来：
+首先，修改上述的文件，使其产生 OOM 的速度慢下来：
 
 ```java
 import java.util.HashMap;
