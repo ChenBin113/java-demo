@@ -325,7 +325,7 @@ public FileInputStream(String name) throws FileNotFoundException {
     this(name != null ? new File(name) : null);
 }
 
-javase.reflect.carcar.Test.java*/
+reflect.carcar.junit.PersonTest.java*/
 public static void main(String[] args) throws FileNotFoundException {
     new FileInputStream("d:/test");
 }
@@ -340,7 +340,7 @@ public static void main(String[] args) {
 ```
 
 ```java
-public class javase.reflect.car.Test {
+public class reflect.car.junit.PersonTest {
 	public static void main(String[] args) throws RuntimeException,Exception {	
 		throw new RuntimeException();	
 	}
@@ -714,24 +714,24 @@ private static class Node<E> {
 
 数据结构是二叉树。
 
-先创建一个比较器 IdComparator 和即将比较的类 Person。
+先创建一个比较器 IdComparator 和即将比较的类 junit.Person。
 
 ```java
-class IdComparator implements Comparator<Person> {
+class IdComparator implements Comparator<junit.Person> {
     @Override
-    public int compare(Person o1, Person o2) {
+    public int compare(junit.Person o1, junit.Person o2) {
         return o2.getId() - o1.getId();
     }
 }
 
-class Person {
+class junit.Person {
     private int id;
     private String name;
 
-    public Person() {
+    public junit.Person() {
     }
 
-    public Person(int id, String name) {
+    public junit.Person(int id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -754,7 +754,7 @@ class Person {
 
     @Override
     public String toString() {
-        return "Person{" +
+        return "junit.Person{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
@@ -767,23 +767,23 @@ class Person {
 ```java
 public class ComparatorTest02 {
     public static void main(String[] args) {
-        Person p1 = new Person(1, "张三");
-        Person p2 = new Person(2, "李四");
-        Person p3 = new Person(3, "王五");
+        junit.Person p1 = new junit.Person(1, "张三");
+        junit.Person p2 = new junit.Person(2, "李四");
+        junit.Person p3 = new junit.Person(3, "王五");
 
-        TreeSet<Person> set = new TreeSet<>(new IdComparator());
+        TreeSet<junit.Person> set = new TreeSet<>(new IdComparator());
         set.add(p1);
         set.add(p2);
         set.add(p3);
 
-        for (Person p : set) {
+        for (junit.Person p : set) {
             System.out.println(p);
         }
     }
 }
 ```
 
-测试类先创建了三个 Person 类对象，然后创建一个 TreeSet 对象，构造方法传入一个事先定义的 IdComparator 类的对象，调用 add() 方法，探究一下 add() 方法源码：
+测试类先创建了三个 junit.Person 类对象，然后创建一个 TreeSet 对象，构造方法传入一个事先定义的 IdComparator 类的对象，调用 add() 方法，探究一下 add() 方法源码：
 
 ```java
 public boolean add(E e) {
@@ -802,7 +802,7 @@ private transient NavigableMap<E,Object> m;
 
 ![1574250349672](javase.assets/1574250349672.png)
 
-key 在这个案例中就是 Person 类了，value 是一个 Object 类型。再看看 put 方法第二个参数 `PRESENT` ，注释说是起到占位作用的，也就是 TreeSet 只需要 Map 的 key 存放元素，value 则使用一个 Object 类的对象填充。 
+key 在这个案例中就是 junit.Person 类了，value 是一个 Object 类型。再看看 put 方法第二个参数 `PRESENT` ，注释说是起到占位作用的，也就是 TreeSet 只需要 Map 的 key 存放元素，value 则使用一个 Object 类的对象填充。 
 
 ```java
 // Dummy value to associate with an Object in the backing Map
@@ -839,9 +839,9 @@ public V put(K key, V value) {
 
 ```java
 output:
-Person{id=3, name='王五'}
-Person{id=2, name='李四'}
-Person{id=1, name='张三'}
+junit.Person{id=3, name='王五'}
+junit.Person{id=2, name='李四'}
+junit.Person{id=1, name='张三'}
 ```
 
 查看以上的输出结果，自定义比较器做到了以 Id 降序比较，TreeSet 构建方法传入了比较器。
@@ -982,17 +982,12 @@ public enum State {
 ## 反射
 
 ```java
-package javase.reflect.car;
-
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Properties;
-import java.util.ResourceBundle;
+package reflect.car;
 
 /**
  * 反射：使用两种方式读取配置文件的信息
  */
-public class Test {
+public class junit.PersonTest {
     public static void main(String[] args) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         fun1();
         fun2();
