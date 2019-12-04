@@ -1,6 +1,6 @@
 # git - 初级
 
-# 常用命令
+## 常用命令
 
 ## git init                
 
@@ -142,7 +142,7 @@ git reset origin/master --hard 可以回退到 origin/master 版本
 
 # git - 高级
 
-# 常用命令
+## 常用命令
 
 ## 创建分支 - git branch
 

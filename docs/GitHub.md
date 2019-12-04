@@ -1,3 +1,83 @@
+# GitHub - 在 Windows 系统下使用批处理文件自动提交代码到 GitHub 上
+
+## 需求
+
+每天都上传代码到 GitHub 上，需要一种脚本文件自动完成一些重复的工作。
+
+- git add .
+- git commit -m "message"
+- git push
+
+缺点是上传的 message 都为 "auto commit"，违背了代码管理的初衷，以后查看这些 message 很难知道当时修改了什么内容。
+
+经过测试可得，如果当天没有修改项目文件内容，则不会完成 add commit push 操作。因此也可以在需要记录的当天手动执行 commit，加上一些必要的 message 信息，批处理文件则会完成 push 操作。
+
+此前准备，需要已经配置好手动完成 push 到远程仓库的操作，在这种条件下才能完成自动化脚本的正确运行。
+
+## 实现
+
+### 编写文件
+
+- 先在 Windows 下创建一个 `leetcode.txt` 文件，并输入以下内容。完成后更改文件内容后缀名，使其变成 `leetcode.bat` 批处理文件。
+
+```bash
+@echo off
+@title bat execute git auto commit
+F:
+cd F:/Code/Java/algorithm/leetcode
+git add .
+git commit -m "Auto commit."
+git push
+```
+
+- 解释说明：再次强调，如果看了这些解释仍不清楚 bat 文件的作用则需要先手动 commit 到 GitHub 上。
+
+```bash
+@echo off #打开回显或关闭请求回显功能，off 可以改成 on。
+@title bat execute git auto commit #运行时命令行窗口的 title
+F:
+cd F:/Code/Java/algorithm/leetcode #这里是要提交的项目目录，需要更改成自己的文件目录
+git add .
+git commit -m "Auto commit."
+git push #git 命令
+```
+
+### 使用 Windows 的任务计划程序
+
+- 创建基本任务
+
+![1574736133027](GitHub.assets/1574736133027.png)
+
+- 填写信息
+
+![1574736198141](GitHub.assets/1574736198141.png)
+
+- 设置触发器为每天启动
+
+![1574736249611](GitHub.assets/1574736249611.png)
+
+- 设置每天启动的时间
+
+![1574736274987](GitHub.assets/1574736274987.png)
+
+- 设置操作
+
+![1574736322779](GitHub.assets/1574736322779.png)
+
+- 配置刚才写的脚本文件 `leetcode.bat` 
+
+![1574736474371](GitHub.assets/1574736474371.png)
+
+- 完成
+
+![1574736506503](GitHub.assets/1574736506503.png)
+
+### 查看
+
+- 可以在任务计划程序库查看是否成功添加
+
+![1574736660138](GitHub.assets/1574736660138.png)
+
 # GitHub - 如何高效搜索一个项目
 
 ## 网址
@@ -42,7 +122,7 @@ stars 和 forks 数一定程度可以看到项目受欢迎的程度，`Search` �
 
 `https://github.com/vuejs/vue/compare/dev...0.12-csp`
 
-上面举了一个例子，是 vuejs 的 vue 项目，使用了 compare 功能来比较项目不同 commit 的区别，比较的双方是 `dev` 和 `0.12-csp` 。举这个例子，主要是展示 GitHub 网站的 compare 功能。
+上面举了一个例子，是 vuejs 的 vue 项目，使用了 compare 功能来比较项目不同 commit 的区别，比较的双方是 `dev` 和 `0.12-csp` 。举这个例子来展示 GitHub 网站的 compare 功能。
 
 ## tree
 
@@ -122,4 +202,54 @@ Sublime Text3
 ```
 
 
+
+# GitHub - 如何学习一个项目
+
+如果已经在 GitHub 上找到了一个完整的项目，如何学习一个项目呢？以 [halo](https://github.com/halo-dev/halo) 博客系统为例，该项目使用 gradle 管理，使用了 Spring Boot 框架。
+
+## 查看依赖
+
+通过 maven 或 gradle 的配置查看项目依赖了哪些组件。
+
+## 运行项目
+
+Spring Boot 的项目在 src 目录下有一个 application 入口，可以据此运行整个项目。
+
+查看 resources，配置文件等非代码的文件。
+
+![1575391884444](GitHub.assets/1575391884444.png)
+
+## 查看代码
+
+controller 层，接收前端发来的请求，起调度作用
+
+service 层，服务层，业务代码 / 逻辑代码
+
+repository 存放和 db 交互的代码
+
+model 都是对象，entity 和数据库相关，dto 存放再封装的对象
+
+## 其他组件
+
+util 工具包
+
+security 安全验证
+
+listener 监听器
+
+filter 过滤器
+
+handler 处理器
+
+exception 异常处理
+
+factory 工厂类
+
+cache 缓存
+
+config 配置
+
+## debug
+
+通过前端的输入，通过 url 查找后端 controller 如何接收并处理请求，借鉴一种白盒测试的思路就可以知道内部的逻辑如何跳转的。整个项目结构比较完善，很多地方也是进行了多次的重构。借助 debug 的方式可以较好的知道内部的逻辑，在自己写项目的时候可以借鉴这种思路。
 

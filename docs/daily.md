@@ -42,127 +42,306 @@ public interface InterfaceTest01 {
 
 这篇是自己的一些小结，很多细节没有考证过，如有疏漏请指正为感。
 
-# 日常 - 在 Windows 系统下使用批处理文件自动提交代码到 GitHub 上
+# 日常 - 从 OutOfMemoryError 引发的思考
 
-## 需求
+观看视频学习如何引发 OOM 和排查问题的过程，[视频](https://www.bilibili.com/video/av74026881?t=190)。
 
-每天都上传代码到 GitHub 上，需要一种脚本文件自动完成一些重复的工作。
+通过这个视频的学习还是了解了不少 JVM 的知识以及 debug 的方法，记录如下。
 
-- git add .
-- git commit -m "message"
-- git push
+## 问题
 
-缺点是上传的 message 都为 "auto commit"，违背了代码管理的初衷，以后查看这些 message 很难知道当时修改了什么内容。
+常见的有三类：
 
-经过测试可得，如果当天没有修改项目文件内容，则不会完成 add commit push 操作。因此也可以在需要记录的当天手动执行 commit，加上一些必要的 message 信息，批处理文件则会完成 push 操作。
+- java.lang.OutOfMemoryError: Java heap space
+- java.lang.OutOfMemoryError: Java metaspace
+- java.lang.OutOfMemoryError: Java perm gen
 
-此前准备，需要已经配置好手动完成 push 到远程仓库的操作，在这种条件下才能完成自动化脚本的正确运行。
+## 实现 OOM
 
-## 实现
+创建一个 OOM.java 文件，内容如下，由于将在命令行窗口执行 java 文件，所以不添加包名：
 
-### 编写文件
+```java
+import java.util.HashMap;
+import java.util.Map;
 
-- 先在 Windows 下创建一个 `leetcode.txt` 文件，并输入以下内容。完成后更改文件内容后缀名，使其变成 `leetcode.bat` 批处理文件。
-
-```bash
-@echo off
-@title bat execute git auto commit
-F:
-cd F:/Code/Java/algorithm/leetcode
-git add .
-git commit -m "Auto commit."
-git push
+public class OOM {
+    public static void main(String[] args) {
+        Map cache = new HashMap();
+        for (int i = 0; i < 128; i++) {
+            cache.put(i, new byte[1024 * 1024]);
+        }
+    }
+}
 ```
 
-- 解释说明：再次强调，如果看了这些解释仍不清楚 bat 文件的作用则需要先手动 commit 到 GitHub 上。
+此时使用 javac 命令编译：`javac OOM.java` ，会出现 warning，原因是 Map 没有使用泛型，可以忽略。
 
-```bash
-@echo off #打开回显或关闭请求回显功能，off 可以改成 on。
-@title bat execute git auto commit #运行时命令行窗口的 title
-F:
-cd F:/Code/Java/algorithm/leetcode #这里是要提交的项目目录，需要更改成自己的文件目录
-git add .
-git commit -m "Auto commit."
-git push #git 命令
+使用 java 命令运行 OOM.class 文件，此时需要设定运行内存大小，因为命令会创建的一堆对象大小为 128 m：
+
+```java
+F:\Code\Java\java-demo\src\oom>java -Xmx128m OOM
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+        at OOM.main(OOM.java:8)
 ```
 
-### 使用 Windows 的任务计划程序
+至此，引发 OutOfMemoryError 成功。
 
-- 创建基本任务
+## 拿到 Heap Dump 快照
 
-![1574736133027](daily.assets/1574736133027.png)
+两个方法：
 
-- 填写信息
+### 第一
 
-![1574736198141](daily.assets/1574736198141.png)
+在启动时添加参数，`-XX:+HeapDumpOnOutOfMemoryError` ：
 
-- 设置触发器为每天启动
+```java
+F:\Code\Java\java-demo\src\oom>java -Xmx128m -XX:+HeapDumpOutOfMemoryError OOM
+Unrecognized VM option 'HeapDumpOutOfMemoryError'
+Did you mean '(+/-)HeapDumpOnOutOfMemoryError'?
+Error: Could not create the Java Virtual Machine.
+Error: A fatal exception has occurred. Program will exit.
 
-![1574736249611](daily.assets/1574736249611.png)
+F:\Code\Java\java-demo\src\oom>java -Xmx128m -XX:+HeapDumpOnOutOfMemoryError OOM
+java.lang.OutOfMemoryError: Java heap space
+Dumping heap to java_pid12992.hprof ...
+Heap dump file created [122989308 bytes in 0.114 secs]
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+        at OOM.main(OOM.java:8)
+```
 
-- 设置每天启动的时间
+此处我将第一次输入错误也写了进来，是想说明，在实验过程中也会出现错误，而 jdk 会提示我是否想添加那个 `(+/-)HeapDumpOnOutOfMemoryError` 参数，这时候通过报错信息就知道了原来参数写错了，进行第二次输入就正确实现我想要拿到的 Heap Dump 快照，这可以帮助我分析堆内存的信息。
 
-![1574736274987](daily.assets/1574736274987.png)
+此时目录下多了一个文件 `java_pid12992.hprof` ，在第三步就将学习如何分析这个快照文件。不过在分析前，再尝试一下第二种拿快照的方法。
 
-- 设置操作
+### 第二
 
-![1574736322779](daily.assets/1574736322779.png)
+第一种方法是在运行前就添加好快照的参数，但是如果是在一个已经运行的程序上，如何添加参数能够拿到快照呢？
 
-- 配置刚才写的脚本文件 `leetcode.bat` 
+首先，修改上述的文件，使其产生 OOM 的速度慢下来：
 
-![1574736474371](daily.assets/1574736474371.png)
+```java
+import java.util.HashMap;
+import java.util.Map;
 
-- 完成
+public class OOM {
+    public static void main(String[] args) throws Exception {
+        Map cache = new HashMap();
+        for (int i = 0; i < 128; i++) {
+			Thread.sleep(1000);
+            cache.put(i, new byte[1024 * 1024]);
+        }
+    }
+}
+```
 
-![1574736506503](daily.assets/1574736506503.png)
+使用 `jps` 命令可以看到当前运行的 java 进程：
 
-### 查看
+```java
+F:\Code\Java\java-demo\src\oom>jps
+17160 GradleDaemon
+8984 Jps
+```
 
-- 可以在任务计划程序库查看是否成功添加
+接下来将使用 `jmap` 命令对进程添加快照，先看一下如何使用这个命令：
 
-![1574736660138](daily.assets/1574736660138.png)
+```java
+F:\Code\Java\java-demo\src\oom>jmap -help
+Usage:
+    jmap [option] <pid>
+        (to connect to running process)
+    jmap [option] <executable <core>
+        (to connect to a core file)
+    jmap [option] [server_id@]<remote server IP or hostname>
+        (to connect to remote debug server)
 
-# 日常 - 如何学习一个项目
+where <option> is one of:
+    <none>               to print same info as Solaris pmap
+    -heap                to print java heap summary
+    -histo[:live]        to print histogram of java object heap; if the "live"
+                         suboption is specified, only count live objects
+    -clstats             to print class loader statistics
+    -finalizerinfo       to print information on objects awaiting finalization
+    -dump:<dump-options> to dump java heap in hprof binary format
+                         dump-options:
+                           live         dump only live objects; if not specified,
+                                        all objects in the heap are dumped.
+                           format=b     binary format
+                           file=<file>  dump heap to <file>
+                         Example: jmap -dump:live,format=b,file=heap.bin <pid>
+    -F                   force. Use with -dump:<dump-options> <pid> or -histo
+                         to force a heap dump or histogram when <pid> does not
+                         respond. The "live" suboption is not supported
+                         in this mode.
+    -h | -help           to print this help message
+    -J<flag>             to pass <flag> directly to the runtime system
+```
 
-假设已经找到了一个完整的项目，用 maven 或者是 gradle 管理，使用了 MVC 的模式。以 [halo](https://github.com/halo-dev/halo) 博客系统为例。
+输入 `jmap -help` 可以看到很多参数，我挑出里面需要使用的部分：
 
-## 查看依赖
+```java
+F:\Code\Java\java-demo\src\oom>jmap -help
 
-通过 maven 或 gradle 的配置查看项目依赖了哪些组件。
+    -dump:<dump-options> to dump java heap in hprof binary format
+                         dump-options:
+                           live         dump only live objects; if not specified,
+                                        all objects in the heap are dumped.
+                           format=b     binary format
+                           file=<file>  dump heap to <file>
+                         Example: jmap -dump:live,format=b,file=heap.bin <pid>
+```
 
-## 运行项目
+`jmap -dump:live,format=b,file=heap.bin <pid>` 记住这个命令，等会儿运行的时候需要添加这个。
 
-Spring Boot 的项目在 src 目录下有一个 application 入口，可以据此运行整个项目。
+像第一种方法一样编译，运行：
 
-查看 resources，配置文件等非代码的配置文件。
+```java
+// compile
+F:\Code\Java\java-demo\src\oom>javac OOM.java 
+// run
+F:\Code\Java\java-demo\src\oom>java -Xmx128m OOM
 
-## 查看代码
+······ // will wait about two minutes, and then print OutOfMemoryError
 
-controller 层，接收前端发来的请求
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+        at OOM.main(OOM.java:9)
+```
 
-service 层，服务层，业务代码 / 逻辑代码
+这时候需要打开另一个命令行窗口，使用 `jps` 查看运行的进程号码，这个号码是后面的 pid 参数：
 
-repository 和 db 交互的代码
+```java
+F:\Code\Java\java-demo\src\oom>jps
+16272 OOM
+8592 Jps
+17160 GradleDaemon
 
-model 都是对象，entity 数据库相关，dto 封装一层对象；maven 是 bean
+```
 
-## 其他组件
+输入参数：
 
-util 工具包
+```java
+F:\Code\Java\java-demo\src\oom>jmap -dump:live,format=b,file=16272.hprof 16272
+Dumping heap to F:\Code\Java\java-demo\src\oom\16272.hprof ...
+Heap dump file created
 
-security 安全验证
+```
 
-listener 监听器
+此时参看目录可以看到，存在两个快照，分别是使用两种方法做到的：
 
-filter 过滤器
+```java
+2019/11/30  14:10       105,162,801 16272.hprof
+2019/11/30  13:50       122,989,308 java_pid12992.hprof
+2019/11/30  14:08               651 OOM.class
+2019/11/30  14:07               307 OOM.java
 
-handler 处理器
+```
 
-exception 异常处理
+### 说明
 
-factory 工厂类
+这些方法是 HotSpot 虚拟机的参数，也就是在其他虚拟机上可能不适用相同的步骤和参数拿到 Heap Dump 快照。
 
-cache 缓存
+JVM 丢出了 OOM，但是 JVM 仍然在运行，只是由于内存不足响应比较慢，这时候如果存在一些不耗内存的操作仍然可以执行。
 
-config 配置
+## 分析 OOM
 
+OOM 是怎么产生的？
+
+需要知道 GC 原理，GC 对垃圾的判断是对内存的对象进行可达性分析，GC Roots 对象被认为是起始点，从 GC Root 出发，一直向下搜索。GC Root 可达的对象就不需要回收，其他对象进行清理。
+
+此时有可能出现一些对象一直没有被清理的情况，heap 满，产生 OOM。
+
+也有可能是新建的对象太大，而 heap 没有一大片空间可以容纳（由于此前的清理使得 heap 空间呈碎片化），此时产生 OOM。
+
+总结产生 OOM 的原因：50% 代码问题（本例的 OOM.java），40% 配置问题（本例的 -Xmx128m），10% 内存真的不够。
+
+## 分析快照常用工具
+
+### VisualVM
+
+VisualVM，JDK 9+ 的版本需要自己下载，本机使用的是 JDK 8，命令行输入 `jvisualvm` 就可以调用了。
+
+- ![1575095690925](daily.assets/1575095690925.png)
+
+  
+
+先看一下 JDK 自带的 VisualVM，进入 JDK 的 bin 目录下，看一下常用的程序：`C:\Program Files\Java\jdk1.8.0_221\bin`
+
+| 程序          | 作用                           |
+| ------------- | ------------------------------ |
+| jar.exe       | 打包                           |
+| java.exe      | 启动虚拟机，运行字节码文件     |
+| javac.exe     | 编译 java 文件                 |
+| javadoc.exe   | 生成 api 文件                  |
+| javap.exe     | 反编译，查看字节码             |
+| jcmd.exe      | 对运行的虚拟机发命令           |
+| jdb.exe       | 调试                           |
+| jmap.exe      | 创建快照 Dump                  |
+| jps.exe       | 当前计算机运行的所有 java 进程 |
+| jstack.exe    |                                |
+| jstat.exe     | 查看整个 jvm 的状况            |
+| jvisualvm.exe | 调用 VisualVM                  |
+
+简单查看程序的运行发生了什么，输入命令 `jvisualvm`，命令行窗口运行 `java -Xmx128m OOM`，此时可以看到本地出现了 OOM 这个进程，双击可以连接，然后看到启动时虚拟机输入的参数。
+
+![1575098268513](daily.assets/1575098268513.png)
+
+点开监视可以看到堆 Metaspace 是逐渐变大的。
+
+![1575098347520](daily.assets/1575098347520.png)
+
+选择装载刚才的快照 Heap Dump，可以进一步查看里面的情况：
+
+![1575098465937](daily.assets/1575098465937.png)
+
+可以看到占据内存最多的是 `byte[]`，
+
+![1575098571657](daily.assets/1575098571657.png)
+
+### MAT
+
+Eclipse 开源的 Memory Analyzer，可以从官网下载。导入刚才的快照。
+
+![1575099421303](daily.assets/1575099421303.png)
+
+下面两个主要的区域是分析快照的地方：
+
+![1575099707125](daily.assets/1575099707125.png)
+
+#### Histogram
+
+主要查看和筛选出引发 OOM 的 Class 对象。其统计了每个类的实例对象，可以看到有 Shallow Heap 和 Retained Heap 两个部分。
+
+![1575100308324](daily.assets/1575100308324.png)
+
+retained 的概念想通过以下的叙述解释：假设 A 对象需要被回收，这时候可以同时回收 A、C、E 三个对象，这时候的 Retained Heap 相应就比较大。
+
+![1575101198588](daily.assets/1575101198588.png)
+
+如果是下面的情况，则只能回收 A 对象，因为 B 对象指向了 C 对象，这时候的 Retained Heap 相对应就变小了。
+
+![1575101281688](daily.assets/1575101281688.png)
+
+#### Dominator Tree
+
+占据内存空间很大的对象以及使他们一直存在的原因是什么，截了个图，可以看到是 main 线程保留着这些对象
+
+![1575099855474](daily.assets/1575099855474.png)
+
+#### Leak Suspects
+
+也是主要使用的功能，可以分析可能发生溢出的原因。
+
+#### Top Components
+
+给出占据堆内存超过 1% 的组件。
+
+## Heap Dump 分析
+
+一般来说有两个原因导致 heap 溢出：
+
+Metaspace / PermGen —— Class 对象没有被正确的释放，尤其是 ClassLoader，一般来说自己不写 ClassLoader 里面最多只有几十个
+
+Heap space —— 瞄准占空间最大的对象
+
+![1575101677409](daily.assets/1575101677409.png)
+
+通过这些工具的查看，找到溢出的 Class 对象，使用 `Merge Shortest Paths to GC Roots` 功能就可以找到一些 `Path to GC Roots` 路径，这些路径显示了这些对象是如何相互引用以及避免了垃圾回收，最终引发 OOM 的 Error 信息。找到这些信息后，通过修改代码规避这些问题，修复这些 bug。
