@@ -185,3 +185,34 @@ Connection established.
 一句话：遇到 bug 的情况千千万，只有想清楚最有可能出现问题的地方，戒急戒躁，一步一步排查，才能修复。
 
 与君共勉！
+
+# Linux - 查看 Tomcat 是否正在运行
+
+命令 `ps -ef | grep java` ，查看到的数据为：
+
+```bash
+root      2197     1  0 Nov12 ?        01:08:15 java -jar halo-1.0.3.jar
+root      2586  2506  0 19:24 pts/0    00:00:00 grep --color=auto java
+```
+
+此时运行的是 `halo` 博客项目的 jar 包，还有查询的这条命令，Tomcat 没有在运行。
+
+使用命令启动 Tomcat，在 `~Tomcat/conf/` 目录下运行 `./startup.sh` 命令，启动后使用命令 `ps -ef | grep java` ，查看到的数据为：
+
+```bash
+root      2197     1  0 Nov12 ?        01:08:15 java -jar halo-1.0.3.jar
+root      2597     1 16 19:25 pts/0    00:00:02 /usr/local/jdk1.8.0_231/bin/java -Djava.util.logging.config.file=/home/pan/tomcat/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Djdk.tls.ephemeralDHKeySize=2048 -Djava.protocol.handler.pkgs=org.apache.catalina.webresources -Dorg.apache.catalina.security.SecurityListener.UMASK=0027 -Dignore.endorsed.dirs= -classpath /home/pan/tomcat/bin/bootstrap.jar:/home/pan/tomcat/bin/tomcat-juli.jar -Dcatalina.base=/home/pan/tomcat -Dcatalina.home=/home/pan/tomcat -Djava.io.tmpdir=/home/pan/tomcat/temp org.apache.catalina.startup.Bootstrap start
+root      2613  2506  0 19:25 pts/0    00:00:00 grep --color=auto java
+```
+
+此时可以看到 Tomcat 的 catalina 已经运行了。
+
+还可以使用上次学习 OOM 学会的命令 `jps` ，得到的结果也是 Bootstrap 已经启动：
+
+```bash
+[root@izuf6ab9p10tmh226b05dez bin]# jps
+2755 Jps
+2197 jar
+2733 Bootstrap
+```
+

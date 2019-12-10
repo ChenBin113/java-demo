@@ -201,6 +201,29 @@ Sublime Text3
 [栈-队列](#%E6%A0%88-%E9%98%9F%E5%88%97)
 ```
 
+## 新发现
+
+通过查看项目源码，发现了一个功能，添加 `autoanchor="true"` 参数，将在标题前添加一个锚点，此时就可以解决一些中文标点无法被读取的问题了，而且在 Markdown 格式下，预览出来的效果会略去这些添加的 `<a></a>` 标签。
+
+```bash
+<!-- MarkdownTOC levels="1,2,3" autolink="true"  autoanchor="true" -->
+
+- [_002_AddTwoNumbers](#002addtwonumbers)
+  - [要点](#%E8%A6%81%E7%82%B9)
+
+<!-- /MarkdownTOC -->
+
+- 相关代码 [src/linkedlist](./src/linkedlist)
+
+<a id="002addtwonumbers"></a>
+
+## _002_AddTwoNumbers
+
+<a id="%E8%A6%81%E7%82%B9"></a>
+
+### 要点	
+```
+
 
 
 # GitHub - 如何学习一个项目
