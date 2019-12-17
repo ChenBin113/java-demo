@@ -2,24 +2,64 @@
 
 ## 概述
 
+### Java 相关
+
+Java 有三个方向：
+- JavaSE（Java Platform，Standard Edition），这个部分是 Java 语言的基础知识，需要牢固掌握，后期的框架都是基于这些基础之上发展的，属于Java语言的地基；学习 Android 开发也需要学习这部分知识。
+- JavaEE（企业级 enterprise），这个是 JavaSE 的发展，是企业级应用。这部分的知识有：HTML，CSS，JavaScript，Ajax，JDBC，SQL，Json，Servlet，JSP，maven 等等。通过学习这部分知识，建立一种客户端和服务器端交互的模型。
+- JavaME，是为机顶盒、移动电话和 PDA 之类嵌入式消费电子设备提供的 Java 语言平台，包括虚拟机和一系列标准化的 Java API。
+
+JavaEE 已由 Oracle 交给 Eclipse 基金会管理，改名为 JakartaEE。
+
+### Java 开发
+
+JDK（Java Development Kit），是一套开发工具箱，能开发也能运行，**开发＋运行**；JRE（Java Runtime Environment），Java 的运行环境。
+
+JRE 的存在，解决了一些企业没有开发的需求，只有运行 Java 程序的需求的问题。
+
+JVM（Java Virtual Machine），Java 的虚拟机，程序 .java 文件经过编译之后成为 .class 文件，在虚拟机上运行。不同的操作系统（Windows，Linux，MacOS···）对应的虚拟机不相同，正是由于虚拟机的存在，保证同一份 .class 文件可以在不同的操作系统上运行。虚拟机可以看做操作系统和 .class 文件的**翻译机**。
+
 ### 常用 DOS 命令
 
-| 功能                                     | 如何实现             |
-| ---------------------------------------- | -------------------- |
-| 进入不同的磁盘                           | D:                   |
-| 查看当前目录所有文件和文件夹             | dir                  |
-| 创建文件夹                               | md test              |
-| 进入文件夹                               | cd test              |
-| 退回到上一级目录                         | cd..                 |
-| 删除文件                                 | del test.txt         |
-| 删除多个同类型文件                       | del *.txt            |
-| 删除空文件夹                             | rd test              |
-| 删除非空文件夹，使用下列命令后提示选择 Y | del test             |
-| 读取文件内容                             | more [file]          |
-| 编译 java 文件                           | javac *.java         |
-| 运行字节码文件                           | java *(不需要扩展名) |
+| 功能                                     | 如何实现                      |
+| ---------------------------------------- | ----------------------------- |
+| 进入不同的磁盘                           | D:                            |
+| 查看当前目录所有文件和文件夹             | dir                           |
+| 创建文件夹                               | md test                       |
+| 进入文件夹                               | cd test                       |
+| 退回到上一级目录                         | cd..                          |
+| 删除文件                                 | del test.txt                  |
+| 删除多个同类型文件                       | del *.txt                     |
+| 删除空文件夹                             | rd test                       |
+| 删除非空文件夹，使用下列命令后提示选择 Y | del test                      |
+| 读取文件内容                             | more [file]                   |
+| 编译 java 文件                           | javac *.java                  |
+| 运行字节码文件                           | java *(不需要扩展名)          |
+| 清空当前命令行窗口                       | cls                           |
+| 智能补全命令，常用来补全文件名           | tab                           |
+| 查询 ip 相关配置                         | ipconfig（Linux 为 ifconfig） |
 
 进入一个空的文件夹后使用 `dir` 命令可以看到两个 `dir` 文件 `.` 和 `..` ，分别代表本级文件夹和上一级文件夹。
+
+### 如何准备开发 Java 程序的环境
+
+首先，去 Oracle 官网下载 JDK。JDK 里面的文件：
+
+![](javase.assets/1619840-20190827162318434-2082701178.png)
+
+- bin：包含一些可执行文件
+- include：包含一些 C 语言的头文件
+- jre：JDK 包含 JRE，开发 + 运行
+- lib：一些 jar 包，虚拟机运行需要的文件
+- src：源文件，非常重要的 .java 文件
+
+其次，配置环境变量，确保可以直接使用 `java` 、`javac` 等命令。环境变量具体配置可以搜素相关的网页，在未来的使用中，配置环境变量非常常见，需要掌握快速配置环境变量的能力，因此，最好对配置环境变量的作用进行理解。环境变量的作用相当于告诉系统到哪里可以调用程序，javac、java 命令都是 JDK bin 文件夹下的可执行文件。
+
+![](javase.assets/1619840-20190827162252962-1856272444.png)
+
+
+
+### 第一个 Java 文件
 
 ```java
 public class MainTest {
@@ -28,9 +68,15 @@ public class MainTest {
         System.out.println(args[1]);
     }
 }
+```
 
+public，权限修饰符，修饰的类类名需要跟文件名一致，而且一个 .java 文件只能有一个 public 类，可以有多个其他类，在编译的过程中一个 java 文件会产生多个 class 文件。
+
+初学 Java，会先使用 command 窗口执行 .java 文件。通过 `win + r` 以及输入 `cmd` 命令可以调出 Windows 操作系统的命令行窗口。命令行窗口使用 DOS 命令（Disk Operating System 磁盘操作系统），以下是刚开始使用 Java 过程中常用的命令。
+
+```bash
 cmd:
-javac MainTest.java
+javac MainTest.java //注意文件名有无后缀
 java MainTest "hello" "world"
 
 output:
@@ -38,11 +84,13 @@ output:
 "world"
 ```
 
+使用的 `java [-options] class [args...]` 输入了两个参数，在 java 程序的逻辑中将两个参数逐个打印出来。
 
+### 使用 javadoc 命令制作 java 文件中文档注释
+
+写好 Hello.java 文件，在文件当前目录下调出命令行窗口，使用 `javadoc -d mydoc -author -version Hello.java` 命令，即可制作 Hello.java 的 api 文档。
 
 ## 语言基础
-
-### 原码 - 反码 - 补码 
 
 ### 算术运算符
 
@@ -63,8 +111,6 @@ output:
 0;
 ```
 
-
-
 %，如果对负数取模，可以把模数负号忽略不计。
 
 ```java
@@ -76,9 +122,39 @@ System.out.println(5 % 2); //1
 
 
 
+### 布尔运算符
+
+| 名称     | 符号 |
+| -------- | ---- |
+| 逻辑与   | &    |
+| 逻辑或   | \|   |
+| 逻辑异或 | ^    |
+| 逻辑非   | !    |
+| 短路与   | &&   |
+| 短路或   | \|\| |
+
+&& 比 || 优先级高
+
+```java
+System.out.println(false && true || true); //true
+System.out.println(true || false && false); //true
+```
+
+
+
 ### 位运算符
 
-位运算符优先级和算术运算符优先级
+| 名称       | 符号 |
+| ---------- | ---- |
+| 位与       | &    |
+| 位或       | \|   |
+| 位异或     | ^    |
+| 位非       | ~    |
+| 右移       | >>   |
+| 左移       | <<   |
+| 无符号右移 | >>>  |
+
+位运算符优先级和算术运算符优先级**低**。
 
 ```java
 //如果位运算符优先级比算术运算符优先级高，输出应该为 15
@@ -88,6 +164,12 @@ System.out.println(i);
 
 output:8;
 //结论：位运算符优先级比算术运算符优先级低
+```
+
+位非：
+
+```java
+System.out.println(~1); //-2
 ```
 
 

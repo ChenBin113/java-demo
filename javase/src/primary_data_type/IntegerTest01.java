@@ -1,3 +1,5 @@
+package primary_data_type;
+
 /**
  * 1.测试 Integer 类的方法 highestOneBit
  */
