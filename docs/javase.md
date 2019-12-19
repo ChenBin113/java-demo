@@ -175,6 +175,26 @@ long longl = 2147483647;
 long long2 = 2147483648L; //此处不报错
 ```
 
+浮点数除 0：
+
+```java
+double d1 = 1.0;
+double d2 = 0.00;
+double d3 = d1 / d2;
+System.out.println(d3); //output: Infinity
+//System.out.println(d3 instanceof Double); //Error，instanceof 不能比较基本数据类型
+System.out.println(d1 / d2); //output: Infinity
+
+Double d1 = 1.0;
+Double d2 = 0.00;
+Double d3 = d1 / d2;
+System.out.println(d3); //output: Infinity
+System.out.println(d3 instanceof Double); //true
+System.out.println(d1 / d2); //output: Infinity
+```
+
+
+
 ### 进制
 
 **二进制：**以 0b 或 0B 开头。
@@ -201,7 +221,9 @@ UTF-8：可变长度的编码集。单个字节有标识作用，即一个字节
 >
 > Java 语言规范规定，在逻辑运算符中，! 拥有最高的优先级，之后是 &&，接下来是 ||
 
-/ ，除法，得到结果都是 0.
++，三种：加法；正号；字符串的连接符
+
+/ ，除法，两个整数相除，只保留整数部分；两个整数相除时，除数不能为 0，否则报 `Exception in thread "main" java.lang.ArithmeticException: / by zero` 异常；两个浮点数相除时，除数为 0 的话，结果是 Infinity
 
 ```java
 System.out.println(-1 / 2);
@@ -212,7 +234,7 @@ output:
 0;
 ```
 
-%，如果对负数取模，可以把模数负号忽略不计。
+%，结果的符号和被模数相同。
 
 ```java
 System.out.println(5 % -2); //1
@@ -221,9 +243,53 @@ System.out.println(-5 % -2); //-1
 System.out.println(5 % 2); //1
 ```
 
+++，自增运算符，**不会改变数据类型**，++ 在前表示先自增变量再做运算，++ 在后表示先做运算再自增变量；-- 同理。
 
+```java
+byte b1 = 127;
+b1++;
+System.out.println(b1); //-128
+```
 
-### 布尔运算符
+### 赋值运算符
+
+扩展赋值运算符：+=，不会改变数据类型。不会出现 byte b = b1 + b2 的问题。其他同理：-=，*=，/=。
+
+```java
+int i = 1;
+i *= 0.1;
+System.out.println(i); //0
+```
+
+### 比较运算符
+
+又称关系运算符：
+
+- ==
+- !=
+- \>=
+- \>
+- <=
+- <
+
+== 和 = 需要做区分：
+
+```java
+int i = 10;
+int j = 20;
+System.out.println(i == j); //false
+System.out.println(i = j); //20
+
+String s = "chenbin113.top";
+System.out.println(s == null); //false
+System.out.println(s = null); //null
+```
+
+值得注意：i = j，是将 j 的值赋给 i，然后打印出 i 的值。因此，在后续的逻辑判断中，为了避免漏写一个 `=` 的问题，建议在判断 String 类型数据是否为 null 的语句写成：`null == s` ，因为 `null = s` 编译将报错。
+
+### 逻辑运算符
+
+又称布尔运算符。
 
 | 名称     | 符号 |
 | -------- | ---- |
@@ -245,15 +311,17 @@ System.out.println(true || false && false); //true
 
 ### 位运算符
 
-| 名称       | 符号 |
-| ---------- | ---- |
-| 位与       | &    |
-| 位或       | \|   |
-| 位异或     | ^    |
-| 位非       | ~    |
-| 右移       | >>   |
-| 左移       | <<   |
-| 无符号右移 | >>>  |
+| 名称       | 符号 |                                                              |
+| ---------- | ---- | ------------------------------------------------------------ |
+| 位与       | &    |                                                              |
+| 位或       | \|   |                                                              |
+| 位异或     | ^    | 一个数据对另一个数据位异或 2 次，则这个数据本身不变：12 ^ 5 ^ 12 结果是 5 |
+| 位非       | ~    |                                                              |
+| 右移       | >>   | 最高位是 0，左边补齐 0；最高为是 1，左边补齐 1               |
+| 左移       | <<   | 左边最高位丢弃，右边补齐 0                                   |
+| 无符号右移 | >>>  | 无论最高位是 0 还是 1，左边补齐 0                            |
+
+注：位异或 ^ 
 
 位运算符优先级和算术运算符优先级**低**。
 
@@ -267,33 +335,30 @@ output:8;
 //结论：位运算符优先级比算术运算符优先级低
 ```
 
+右移 >>：
+
+```java
+/*
+计算机中以补码存在
+-1 原码是 1000 0001
+   反码是 1111 1110
+   补码是 1111 1111
+右移 >> 2 应该先移动 1 再移动 1
+最终结果仍然是 1111 1111
+*/
+System.out.println(-1 >> 2); //-1
+System.out.println(1 >> 2); //0
+```
+
 位非：
 
 ```java
 System.out.println(~1); //-2
 ```
 
+### 三目运算符
 
-
-### 基本数据类型
-
-```java
-double d1 = 1.0;
-double d2 = 0.00;
-double d3 = d1 / d2;
-System.out.println(d3); //output: Infinity
-//System.out.println(d3 instanceof Double); //Error，instanceof 不能比较基本数据类型
-System.out.println(d1 / d2); //output: Infinity
-
-Double d1 = 1.0;
-Double d2 = 0.00;
-Double d3 = d1 / d2;
-System.out.println(d3); //output: Infinity
-System.out.println(d3 instanceof Double); //true
-System.out.println(d1 / d2); //output: Infinity
-```
-
-
+boolean 表达式 ? 表达式1 : 表达式2
 
 ### 分支语句
 

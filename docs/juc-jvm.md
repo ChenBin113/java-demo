@@ -160,3 +160,188 @@ publicclassString{
 
 七个垃圾收集器
 
+# juc 核心知识
+
+## JMM
+
+Java Memory Module，Java 内存模型，是一种规范。
+
+## volatile 关键字
+
+[详细代码](../juc/src/volatiledemo)
+
+### 保证变量的可见性
+
+```java
+/**
+ * volatile 保证了变量在多线程运行下的可见性
+ */
+public class VolatileDemo {
+    public static void main(String[] args) {
+        seeOkByVolatile();
+    }
+    
+    public static void seeOkByVolatile() {
+        MyData myData = new MyData();
+        new Thread(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(Thread.currentThread().getName() + "\t in ThreadA");
+            myData.addTo60();
+            System.out.println(Thread.currentThread().getName() + "\t number change to 60 \t" + myData.number);
+        }, "ThreadA").start();
+
+        while (myData.number == 0) {
+
+        }
+
+        System.out.println(Thread.currentThread().getName() + "\t number != 0");
+    }
+}
+
+class MyData {
+    //int number = 0;
+    volatile int number = 0;
+
+    public void addTo60() {
+        this.number = 60;
+    }
+}
+```
+
+未加 volatile 关键字，变量处于线程不可见的状态，陷入循环：
+
+```java
+ThreadA	 in ThreadA
+ThreadA	 number change to 60 	60
+······
+```
+
+加入 volatile 关键字，变量的值在 ThreadA 和 main 线程间贡献，跳出循环：
+
+```java
+ThreadA	 in ThreadA
+ThreadA	 number change to 60 	60
+main	 number != 0
+```
+
+### 不保证操作的原子性
+
+原子性：不可分割，完整性，即某个线程正在做某个动作，中间不可以被加塞或者被分割，需要整体完整；要么同时成功，要么同时失败。
+
+多个线程同时对一个变量进行操作，不保证变量的原子性：MyData 增加 addPlusPlus() 操作，
+
+```java
+class MyData {
+    public void addPlusPlus() {
+        this.number++;
+    }
+}
+```
+
+在测试类中：
+
+```java
+/* 
+ * volatile 不保证原子性
+ */
+public class VolatileDemo {
+    public static void main(String[] args) {
+        atomicNotOkByVolatile();
+    }
+
+    public static void atomicNotOkByVolatile() {
+        MyData myData = new MyData();
+        for (int i = 0; i < 30; i++) {
+            new Thread(() -> {
+                for (int j = 0; j < 1000; j++) {
+                    myData.addPlusPlus();
+                }
+            }, String.valueOf(i)).start();
+        }
+
+        //两个线程：一个 main 线程，一个 gc 线程
+        while (Thread.activeCount() > 2) {
+            Thread.yield();
+        }
+
+        System.out.println(Thread.currentThread().getName() + "\t" + myData.number);
+    }
+}
+```
+
+输出的结果极少会等于 30,000。
+
+在方法上添加 synchronize 关键字就可以保证了：
+
+```java
+class MyData {
+    public synchronize void addPlusPlus() {
+        this.number++;
+    }
+}
+```
+
+### 注 —— 问题产生
+
+学习到这里产生两个问题：++ 自增操作具体由哪几步构成；synchronize 锁住的区域太大，能否有轻量级的锁法？
+
+解答一问：++ 操作是怎么完成的
+
+编写一个简单的测试用例：
+
+```java
+public class IncrementTest {
+
+    int i = 0;
+
+    public void addPlusPlus() {
+        i++;
+    }
+}
+```
+
+通过 `javap -c volatiledemo.IncrementTest` 反编译命令得到其 class 文件：
+
+```java
+Compiled from "IncrementTest.java"
+public class volatiledemo.IncrementTest {
+  int i;
+
+  public volatiledemo.IncrementTest();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: iconst_0
+       6: putfield      #2                  // Field i:I
+       9: return
+
+  public void addPlusPlus();
+    Code:
+       0: aload_0
+       1: dup
+       2: getfield      #2                  // Field i:I
+       5: iconst_1
+       6: iadd
+       7: putfield      #2                  // Field i:I
+      10: return
+}
+```
+
+可以看到 ++ 分为三个指令，先从主内存获取变量的值，在工作内存中 + 1，再写到主内存中；由于是多线程的读和写入，会出现写覆盖的情况，导致最终出现丢失写值的结果。
+
+```java
+       2: getfield      #2                  // Field i:I
+       5: iconst_1
+       6: iadd
+       7: putfield      #2                  // Field i:I
+```
+
+
+
+
+
