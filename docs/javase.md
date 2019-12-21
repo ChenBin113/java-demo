@@ -358,11 +358,31 @@ System.out.println(~1); //-2
 
 ### 三目运算符
 
-boolean 表达式 ? 表达式1 : 表达式2
+条件表达式(boolean) ? 表达式1 : 表达式2
 
-### 分支语句
+### 程序流程控制
 
-#### while & for 循环：开发使用 for 循环比较多，变量可以从内存中较早的消失？
+- 顺序结构
+- 分支结构
+- 循环结构
+
+### 分支结构
+
+if - else
+
+switch - case
+
+### 循环结构
+
+- for
+
+- while
+
+- do ... while
+
+- JDK 1.5 新增 foreach 循环
+
+while & for 循环：开发使用 for 循环比较多，变量可以从内存中较早的消失？
 
 [可以](./src/javase/LoopTest01.java)，这也是局部代码块的优点。
 
