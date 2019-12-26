@@ -1,4 +1,4 @@
-package class01_juc;
+package _01_juc;
 
 public class ThreadDemo {
     public static void main(String[] args) {
