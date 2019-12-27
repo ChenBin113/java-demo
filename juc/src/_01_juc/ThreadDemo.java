@@ -18,5 +18,12 @@ public class ThreadDemo {
         }, "A").start();
 
         System.out.println("end");
+
+        Integer i = 10;
+        try {
+            i.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
