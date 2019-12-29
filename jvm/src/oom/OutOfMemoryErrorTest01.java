@@ -1,11 +1,15 @@
 package oom;
 
+import java.util.Random;
+
+/**
+ * JVM 配置：-Xms1m -Xmx1m -XX:+PrintGCDetails
+ */
 public class OutOfMemoryErrorTest01 {
     public static void main(String[] args) {
+        String s = "chenbin113.top";
         while (true) {
-            for (int i = 0; i < 10000; i++) {
-                int[] array = new int[1024 * 1024];
-            }
+            s += new Random().nextInt(8888) + new Random().nextInt(9999);
         }
     }
 }
