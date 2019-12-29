@@ -144,6 +144,9 @@ git reset origin/master --hard 可以回退到 origin/master 版本
 
 在本地的项目版本落后于远程仓库，使用 git pull 命令，更新本地仓库，使其与远程仓库一致。
 
+`git fetch --all` 获取远程仓库的信息
+`git reset --hard origin/master` reset 本地仓库版本号，将指针指到远程仓库最新版本上
+
 # git - 高级
 
 ## 常用命令
