@@ -376,7 +376,68 @@ System.out.println(~1); //-2
 
 if - else
 
-switch - case
+```java
+boolean male = true;
+if (male) {
+    System.out.println("是一个男人");
+} else {
+    System.out.println("是一个女人");
+}
+```
+
+switch - case - default
+
+- 使用 break，防止 case 穿透
+
+```java
+String s = scanner.next();
+switch (s) {
+    case "Spring":
+        System.out.println("春天");
+        break;
+    case "Summer":
+        System.out.println("夏天");
+        break;
+    case "Autumn":
+        System.out.println("秋天");
+        break;
+    case "Winter":
+        System.out.println("冬天");
+        break;
+    default:
+        System.out.println("非四季");
+}
+```
+
+- 合理使用 case 穿透，打印季节
+
+```java
+int month = scanner.nextInt();
+switch (month) {
+    case 3:
+    case 4:
+    case 5:
+        System.out.println("春天");
+        break;
+    case 6:
+    case 7:
+    case 8:
+        System.out.println("夏天");
+        break;
+    case 9:
+    case 10:
+    case 11:
+        System.out.println("秋天");
+        break;
+    case 12:
+    case 1:
+    case 2:
+        System.out.println("冬天");
+        break;
+    default:
+        System.out.println("非四季");
+}
+```
 
 ### 循环结构
 
@@ -412,9 +473,42 @@ public class LoopTest01 {
 }
 ```
 
+### 方法重载
 
+Overload，三种因素：
+
+- 同一个类中；
+- 方法名相同；
+- 方法参数相同。
+
+非影响因素：
+
+- 方法前修饰符；
+- 方法返回值。
 
 ## 面向对象
+
+### 面向过程和面向对象
+
+面向过程注重过程，犹如烧水喝茶的过程，先煲水，再冲茶。面向对象则是将这个过程参与者看做对象，有人的动作倒水，有水壶的动作烧水，有人的动作冲茶。将这个过程归类 class 成为一个个对象 Object，对象有方法 Method 和属性 field。
+
+过程固定，则灵活性不高；不同的对象，使用不同的方法，则可以排列组合出多种过程。面向对象编程更贴切生活中的例子。面对复杂的编程要求，面向对象有良好的扩展性。
+
+面向对象三大特性：封装，继承和多态。
+
+- private 修饰变量和方法等体现了封装的特性，但是并不是意味着封装就是私有（private）。
+- Java 支持单继承类 class，多实现接口 interface。
+
+### 类
+
+类可以浓缩成这种形式，extends 和 implements 并存时不可以调换顺序，如果没有添加 `[ ]` 默认是继承 SUN 公司提供的根类 Object：
+
+```java
+class A [extends B] [implements C] {
+}
+```
+
+
 
 ### 构造方法
 
@@ -667,6 +761,32 @@ output:3
 除基本数据类型外，其他的数据类型都是引用类型，因此在将数组传入方法内时，需要注意传的是地址。
 
 ## String 类
+
+### String 相关问题
+
+虽然 String 是引用数据类型，但是由于 String 类是 final 类型，所以不可修改，在方法中修改与基本数据类型是一样的效果：
+
+```java
+public static void main(String[] args) {
+    System.out.println("-------------- 实验 1 --------------");
+    String s = "chenbin";
+    changeString(s);
+    System.out.println("Main.main\t" + s); 
+}
+
+public static void changeString(String s) {
+    s = "chenbin113";
+    System.out.println("Main.changeString\t" + s);
+}
+
+/* output:
+-------------- 实验 1 --------------
+Main.changeString	chenbin113
+Main.main	chenbin
+*/
+```
+
+
 
 ### 正则表达式
 
