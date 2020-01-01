@@ -1,4 +1,4 @@
-package basic;
+package _01_basic;
 
 /**
  * 赋值运算符
