@@ -1,4 +1,4 @@
-package packagingtype;
+package _05_class;
 
 /**
  * 1.测试 Integer 类的方法 highestOneBit

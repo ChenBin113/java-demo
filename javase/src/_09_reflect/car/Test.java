@@ -1,4 +1,4 @@
-package reflect.car;
+package _09_reflect.car;
 
 import java.io.FileReader;
 import java.util.Properties;
@@ -14,7 +14,7 @@ public class Test {
     }
 
     private static void fun1() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        ResourceBundle bundle = ResourceBundle.getBundle("reflect/config/config");
+        ResourceBundle bundle = ResourceBundle.getBundle("_09_reflect/config/config");
         String car = bundle.getString("car");
         Class<?> aClass = Class.forName(car);
         Car c = (Car) aClass.newInstance();

@@ -1,4 +1,4 @@
-package multiprocess;
+package _08_thread;
 
 class MyThread_1 extends Thread {
     @Override
@@ -25,6 +25,11 @@ class MyThread_2 implements Runnable {
  * 两种方法实现多线程
  * 1.继承 Thread 类
  * 2.实现 Runnable 接口
+ *
+ * 区别：
+ * extends 是继承，一般要增强类的功能使用，重写或添加方法
+ * implements 是实现接口
+ * 单继承和多实现
  */
 public class MyThread {
     public static void main(String[] args) {
