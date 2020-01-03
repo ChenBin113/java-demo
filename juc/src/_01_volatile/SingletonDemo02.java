@@ -29,6 +29,5 @@ public class SingletonDemo02 {
                 SingletonDemo02.getInstance();
             }, String.valueOf(i)).start();
         }
-
     }
 }

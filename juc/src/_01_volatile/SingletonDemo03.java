@@ -4,7 +4,7 @@ package _01_volatile;
  * 增加 volatile 关键字，禁止指令重排
  */
 public class SingletonDemo03 {
-    private static SingletonDemo03 instance = null;
+    private static volatile SingletonDemo03 instance = null;
 
     private SingletonDemo03() {
         System.out.println(Thread.currentThread().getName() + "\t SingletonDemo03.SingletonDemo()");

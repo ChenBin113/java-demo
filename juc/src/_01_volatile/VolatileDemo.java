@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class VolatileDemo {
     public static void main(String[] args) {
-        //seeOkByVolatile();
+        seeOkByVolatile();
 
         MyData myData = new MyData();
         for (int i = 0; i < 20; i++) {

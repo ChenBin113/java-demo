@@ -1,5 +1,8 @@
 package _01_volatile;
 
+/**
+ * 指令重排演示 语句 1,2,3 的顺序没有固定的
+ */
 public class ReSortSeqDemo {
     int a = 0;
     boolean flag = false;
