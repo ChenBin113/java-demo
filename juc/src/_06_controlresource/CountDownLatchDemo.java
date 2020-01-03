@@ -17,6 +17,11 @@ public class CountDownLatchDemo {
 
         countDownLatch.await();
         System.out.println("================秦国一统华夏");
+
+        System.out.println();
+        System.out.println(CountryEnum.ONE);
+        System.out.println(CountryEnum.ONE.getRetCode());
+        System.out.println(CountryEnum.ONE.getRetMessage());
     }
 
     public static void closeLibrary() throws InterruptedException {
