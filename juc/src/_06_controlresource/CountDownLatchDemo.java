@@ -2,6 +2,9 @@ package _06_controlresource;
 
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * 火箭倒计时
+ */
 public class CountDownLatchDemo {
     public static void main(String[] args) throws Exception {
         //closeLibrary();
