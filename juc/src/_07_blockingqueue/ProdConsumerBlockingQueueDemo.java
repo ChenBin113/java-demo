@@ -9,14 +9,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProdConsumerBlockingQueueDemo {
     public static void main(String[] args) {
-        MySource mySource = new MySource(new ArrayBlockingQueue<String>(5));
+        MySource mySource = new MySource(new ArrayBlockingQueue<>(10));
 
         new Thread(() -> {
             System.out.println(Thread.currentThread().getName() + "\t生产线程启动");
             try {
                 mySource.myProd();
-                System.out.println();
-                System.out.println();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -26,8 +24,6 @@ public class ProdConsumerBlockingQueueDemo {
             System.out.println(Thread.currentThread().getName() + "\t消费线程启动");
             try {
                 mySource.myConsume();
-                System.out.println();
-                System.out.println();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
