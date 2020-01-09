@@ -1,12 +1,14 @@
 package _07_blockingqueue;
 
-import java.sql.Time;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
+/**
+ * 由于打印和取值不同步，有可能打印出来不是按照顺序，但是实际上就是先生产一个，然后消费一个
+ */
 public class ProdConsumerBlockingQueueDemo {
     public static void main(String[] args) {
         MySource mySource = new MySource(new ArrayBlockingQueue<>(10));
@@ -22,6 +24,8 @@ public class ProdConsumerBlockingQueueDemo {
 
         new Thread(() -> {
             System.out.println(Thread.currentThread().getName() + "\t消费线程启动");
+            System.out.println();
+            System.out.println();
             try {
                 mySource.myConsume();
             } catch (InterruptedException e) {
@@ -47,7 +51,7 @@ class MySource {
 
     public MySource(BlockingQueue<String> blockingQueue) {
         this.blockingQueue = blockingQueue;
-        System.out.println(this.blockingQueue.getClass().getName() + "\t==============传入的阻塞队列类型");
+        System.out.println(this.blockingQueue.getClass().getName() + "\t==============传入的阻塞队列类型\n");
     }
 
     public void myProd() throws InterruptedException {
