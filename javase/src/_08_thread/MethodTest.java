@@ -2,7 +2,9 @@ package _08_thread;
 
 import java.util.concurrent.TimeUnit;
 
-
+/**
+ * join() alive() 方法测试
+ */
 public class MethodTest {
     public static void main(String[] args) throws InterruptedException {
         //joinTest();

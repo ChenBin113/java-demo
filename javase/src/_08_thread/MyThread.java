@@ -1,26 +1,5 @@
 package _08_thread;
 
-class MyThread_1 extends Thread {
-    @Override
-    public void run() {
-        System.out.println("MyThread_1!\t" + "打印奇数");
-        for (int i = 1; i <= 100; i = i + 2) {
-            System.out.print(i + "\t");
-        }
-    }
-}
-
-class MyThread_2 implements Runnable {
-    @Override
-    public void run() {
-        System.out.println("MyThread_2!\t" + "打印偶数");
-        for (int i = 2; i <= 100; i = i + 2) {
-            System.out.print(i + "\t");
-        }
-    }
-}
-
-
 /**
  * 两种方法实现多线程
  * 1.继承 Thread 类
@@ -40,5 +19,25 @@ public class MyThread {
         MyThread_1 mt = new MyThread_1();
         //mt.start();
         mt.start();
+    }
+}
+
+class MyThread_1 extends Thread {
+    @Override
+    public void run() {
+        System.out.println("MyThread_1!\t" + "打印奇数");
+        for (int i = 1; i <= 100; i = i + 2) {
+            System.out.print(i + "\t");
+        }
+    }
+}
+
+class MyThread_2 implements Runnable {
+    @Override
+    public void run() {
+        System.out.println("MyThread_2!\t" + "打印偶数");
+        for (int i = 2; i <= 100; i = i + 2) {
+            System.out.print(i + "\t");
+        }
     }
 }
