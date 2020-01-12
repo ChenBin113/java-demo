@@ -1,5 +1,6 @@
 package _02_lock;
 
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -50,7 +51,7 @@ public class SaleTicket {
 class Ticket {
     //初始票
     private int number = 80;
-    private ReentrantLock reentrantLock = new ReentrantLock();
+    private Lock lock = new ReentrantLock();
 
     //线程安全
     //public synchronized void saleTicket() {
@@ -62,7 +63,7 @@ class Ticket {
     }
 
     public void saleTicketTwo() {
-        reentrantLock.lock();
+        lock.lock();
         try {
             if (number > 0) {
                 System.out.println(Thread.currentThread().getName() + " 线程 还有 " + (number--) + " 张票，剩下 " + number + " 张");
@@ -70,7 +71,7 @@ class Ticket {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            reentrantLock.unlock();
+            lock.unlock();
         }
     }
 }

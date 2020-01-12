@@ -11,7 +11,6 @@ public class DeadLockDemo {
     public static void main(String[] args) {
         new Thread(new HoldLock("lockA", "lockB"), "A 线程").start();
         new Thread(new HoldLock("lockB", "lockA"), "B 线程").start();
-
     }
 
 }
