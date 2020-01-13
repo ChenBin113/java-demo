@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 偶数 ID
@@ -28,9 +29,22 @@ public class StreamDemo {
             return user.getId() % 2 == 0;
         }).filter(user -> {
             return user.getAge() > 24;
-        }).forEach(user -> {
+        }).map(user -> {
+            return user.getUserName().toUpperCase();
+        }).sorted((o1, o2) -> {
+            return o2.compareTo(o1);
+        }).limit(1).forEach(user -> {
             System.out.println(user);
         });
+
+        /*List<Integer> list1 = Arrays.asList(1, 2, 3);
+        List<Integer> list2 = list1.stream().map(number -> {
+            return number * 3;
+        }).collect(Collectors.toList());
+
+        for (Integer integer : list2) {
+            System.out.println(integer);
+        }*/
     }
 }
 
