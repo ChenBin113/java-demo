@@ -345,3 +345,23 @@ Heap space —— 瞄准占空间最大的对象
 ![1575101677409](daily.assets/1575101677409.png)
 
 通过这些工具的查看，找到溢出的 Class 对象，使用 `Merge Shortest Paths to GC Roots` 功能就可以找到一些 `Path to GC Roots` 路径，这些路径显示了这些对象是如何相互引用以及避免了垃圾回收，最终引发 OOM 的 Error 信息。找到这些信息后，通过修改代码规避这些问题，修复这些 bug。
+
+# 日常 - jps 命令
+
+## 问题产生
+今天使用 idea 运行一个程序来使用 JVM 的一些参数，中途 idea 突然退出，之后使用 jps 命令发现程序仍在运行。以下是使用 Terminal 终端查看记录：
+
+```java
+>>jps
+11712 HelloGC
+11728 HelloGC
+12720 KotlinCompileDaemon
+6560 Jps
+1860 Launcher
+9288 RemoteMavenServer
+13516
+```
+
+## shutdown 的方法
+
+由于是在 Windows 环境下，打开了 Windows PowerShell，输入 kill 11712 命令关闭了另一个正在运行的 HelloGC 程序。
