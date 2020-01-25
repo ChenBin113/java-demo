@@ -277,7 +277,7 @@ VisualVM，JDK 9+ 的版本需要自己下载，本机使用的是 JDK 8，命�
 | jmap.exe      | 创建快照 Dump                  |
 | jps.exe       | 当前计算机运行的所有 java 进程 |
 | jstack.exe    |                                |
-| jstat.exe     | 查看整个 jvm 的状况            |
+| jstat.exe     | 查看整个 _02_jvm 的状况            |
 | jvisualvm.exe | 调用 VisualVM                  |
 
 简单查看程序的运行发生了什么，输入命令 `jvisualvm`，命令行窗口运行 `java -Xmx128m OOM`，此时可以看到本地出现了 OOM 这个进程，双击可以连接，然后看到启动时虚拟机输入的参数。

@@ -1,6 +1,6 @@
-# juc
+# _02_juc
 
-## juc 是什么
+## _02_juc 是什么
 
 ### 三个包
 
@@ -39,7 +39,7 @@ wait 放开锁去睡，sleep 握住锁去睡
 
 并行指多个操作同时处理，如一个人同时做多件事
 
-# jvm
+# _02_jvm
 
 ## 问题
 
@@ -63,7 +63,7 @@ JVM 的常用参数调优你知道哪些？
 
 ### 有几种类加载器
 
-jvm 一共有三种加载器，可通过继承 ClassLoader 类自定义类加载器
+_02_jvm 一共有三种加载器，可通过继承 ClassLoader 类自定义类加载器
 
 - Bootstrap ClassLoader，rt 包 jre1.8.0_221/lib/rt.jar
 - Extension ClassLoader，扩展包
@@ -79,7 +79,7 @@ jvm 一共有三种加载器，可通过继承 ClassLoader 类自定义类加载
 类加载的时候不同的加载器来加载类，都会先往上传递，交给 Bootstrap 类加载器，它不能加载的类再交给 Extension 类加载器， Extension 类加载器不能加载再交给 AppClassLoader 类加载器，如果还不能加载类，则会报 ClassNotFoundException。因此，由不同的类加载器加载 Object 类，最终加载的都是同一个。
 
 ```java
-package jvm;
+package _02_jvm;
 
 public class ClassLoaderTest01 {
     public static void main(String[] args) {
@@ -99,7 +99,7 @@ public class ClassLoaderTest01 {
         null
         null
         Exception in thread "main" java.lang.NullPointerException
-            at jvm.ClassLoaderTest01.main(ClassLoaderTest01.java:12)
+            at _02_jvm.ClassLoaderTest01.main(ClassLoaderTest01.java:12)
 
         Process finished with exit code 1
          */
