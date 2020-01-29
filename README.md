@@ -19,11 +19,11 @@
 
 ## Java 基础
 
-[javase](./docs/javase.md)
+[javase](./docs/javase)
 
 ## Java 高级
 
-[_02_juc-_02_jvm](./docs/juc-jvm.md)
+[juc-jvm](./docs/juc-jvm.md)
 
 ## 其他
 
@@ -35,11 +35,4 @@
 
 [Linux](./docs/Linux.md)
 
-
-
-
-
-
-
-
-
+[maven](./docs/maven.md)
