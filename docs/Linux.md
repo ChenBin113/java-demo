@@ -216,3 +216,35 @@ root      2613  2506  0 19:25 pts/0    00:00:00 grep --color=auto java
 2733 Bootstrap
 ```
 
+# Linux - 常用命令
+
+## 关机重启
+
+- reboot，重启
+- shutdown -h now，马上关机
+- shutdown -h 1，一分钟后关机
+- shutdown -r now，马上重启
+- halt，关机
+- syn，当我们关机或者重启时，都应该先执行以下 sync 指令
+- logout，退出当前登录的用户
+- exit，退出当前登录的用户
+
+## 用户管理
+
+- useradd [username]，添加用户
+- passwd [username]，修改用户密码
+- userdel [username]，删除用户
+- userdel -r [username]，删除用户和家目录。注：在删除用户时，一般不将家目录删除
+- id [username]，查询用户及其所在组的信息
+- su [-] [username]，切换用户
+- groupadd [groupname]，添加组。注：root用户组不要随便添加普通用户，权限引发安全问题
+- groupdel [groupname]，删除组
+- useradd -g [groupname] [username]，添加用户的同时设置所在组
+- w，查看当前在线的用户
+- cat /etc/passwd，查看用户，一行为一个用户，每行最后一个字段为用户的shell执行环境，nologin代表无法登陆系统
+- cat /etc/shadow，查看用户
+- cat /etc/passwd | grep -v "nologin"，查看可以登陆系统的用户
+- cat /etc/passwd | wc -l，查看系统用户总数
+- whoami，查看当前用户，其实命令行窗口前已经提示当前用户了
+- usermod -g [groupname] [username]，修改用户所在组
+
