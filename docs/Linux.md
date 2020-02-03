@@ -247,4 +247,3 @@ root      2613  2506  0 19:25 pts/0    00:00:00 grep --color=auto java
 - cat /etc/passwd | wc -l，查看系统用户总数
 - whoami，查看当前用户，其实命令行窗口前已经提示当前用户了
 - usermod -g [groupname] [username]，修改用户所在组
-
