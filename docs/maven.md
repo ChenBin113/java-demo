@@ -405,3 +405,18 @@ under the License.
   -->
 </settings>
 ```
+
+
+
+## Maven 的依赖
+
+compile test provided 是三个常用的 scope 标签，其表示依赖作用的过程：
+
+- compile，作用在编译和运行时
+- test，作用在测试时
+- provided，在打包的时候不会添加进依赖包，如 servlet-api，因为在 Tomcat 或其他容器中内置了 servlet-api，因此只在编码的时候方便测试
+
+此外还有 import 作用域，因为 maven 的项目也是支持单继承的，当需要使用 SpringBoot 的 starter，但是又不想要继承它时，就可以在单独的 pom 文件中使用 dependencymanagement 中定义。在子工程时就可以导入依赖。
+
+
+
