@@ -1,7 +1,7 @@
 package _01_basic;
 
 /**
- * 比较运算符
+ * 比较运算符，== 和 = 的区别
  */
 public class OperationTest03 {
     public static void main(String[] args) {

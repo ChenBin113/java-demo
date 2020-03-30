@@ -1,7 +1,7 @@
 package _01_basic;
 
 /**
- * 赋值运算符
+ * 赋值运算符：右移 >> 2 应该先移动 1 再移动 1
  */
 public class OperationTest02 {
     public static void main(String[] args) {
